@@ -215,6 +215,11 @@ my @PROPERTIES = (
     q{make-check.bin}          => q{`make' command used for running `make check' (e.g. `make', }
                                 . q{`nmake', `jom'); defaults to the value of make.bin},
 
+    q{qt.patch.first}          => q{patch 1},
+    q{qt.patch.second}         => q{patch 2},
+    q{qt.patch.module}         => q{mdule to be patched},
+
+
     q{make-check.args}         => q{extra arguments passed to `make check' command when running }
                                 . q{tests (e.g. `-j2'); defaults to the value of make.args with }
                                 . q{any -jN replaced with -j1, and with -k appended},
@@ -296,6 +301,35 @@ sub path_under
     return 0;
 }
 
+sub patch_my_src
+{
+    my ($self) = @_;
+    my $qt_patch_first         = $self->{ 'qt.patch.first' };
+    my $qt_patch_second        = $self->{ 'qt.patch.second' };
+    my $qt_patch_module        = $self->{ 'qt.patch.module' };
+    my $qt_build_dir           = $self->{ 'qt.build.dir' };
+    my $qt_gitmodule           = $self->{ 'qt.gitmodule' };
+    
+    print "Patching....\n";
+    #chdir( $qt_build_dir );
+    #chdir( $qt_patch_module );
+    if ( $qt_patch_first ne '' || $qt_patch_second ne '' ){
+      chdir( $qt_build_dir );
+      chdir( $qt_patch_module );
+    }
+
+    if ($qt_patch_first ne "") {
+      # gerrit patch
+      $self->exe( $qt_patch_first );
+
+    }
+    if ($qt_patch_second ne "") {
+      #diff
+      $self->exe( 'git', 'apply', "$qt_patch_second" );
+    }
+
+}
+
 sub run
 {
     my ($self) = @_;
@@ -309,7 +343,8 @@ sub run
     $self->run_git_checkout;
 
     my $doing_revdep = $self->maybe_enter_revdep_context;
-
+    
+    $self->patch_my_src;
     $self->run_configure;
     $self->run_qtqa_autotests( 'prebuild' );
     $self->run_compile;
@@ -527,6 +562,9 @@ sub read_and_store_configuration
         'qt.qtqa-tests.insignificant'   => 0                                     ,
         'qt.sync.profile.dir'     => q{}                                         ,
 
+        'qt.patch.first'          => q{}                                         ,
+        'qt.patch.second'         => q{}                                         ,
+        'qt.patch.module'         => q{}                                         ,
     );
 
     # for convenience only - this should not be overridden
