@@ -479,8 +479,8 @@ sub plan_testcase
     );
     my @qmake_keys = (@qmake_tests, @qmake_scalar_values);
 	
-	if ( $ENV{ADB_DEVICE} ) {
-        my $string = qq({"type":"server-update","token":"ABCD"});
+	if ( $ENV{ADB_DEVICE} && $ENV{ADB_DEVICE_SW_VERSION}) {
+        my $string = qq({"type":"device-request","name":"$ENV{ADB_DEVICE}","version":"$ENV{ADB_DEVICE_SW_VERSION}"});
         my $json = JSON->new->allow_nonref;
         my $json_text = $json->encode($string);
         my $remote = IO::Socket::INET->new( Proto     => "tcp",
