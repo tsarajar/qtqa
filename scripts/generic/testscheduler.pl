@@ -191,6 +191,17 @@ sub run
         die "Missing mandatory --plan argument";
     }
 
+    if ( $ENV{ADB_DEVICE_IP} && $ENV{ADB_BIN_DIR} ) {
+	  my $cmd;
+      if ( $ENV{ADB_DEVICE_IP} =~ m/device/i ) {
+        $cmd = catfile($ENV{ADB_BIN_DIR},"adb")." devices";
+      } else {
+	    $cmd = catfile($ENV{ADB_BIN_DIR},"adb")." connect $ENV{ADB_DEVICE_IP}";
+	  }
+	  print "+ $cmd\n";
+	  system ($cmd);
+	}
+	
     if ($self->{ parallel_stress } && $self->{ jobs } <= 1) {
         die q{error: --parallel-stress mode doesn't make sense with -j1};
     }
