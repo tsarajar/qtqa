@@ -219,8 +219,8 @@ sub android_connect
         return 0;        
     }
     print " Found device to be connected from env: $android_to_connect \n";
-    system("ssh dev-ubuntu1204-x64-01.ci.local -L 5555:10.99.112.12:5555 -N &");
-    $android_to_connect="127.0.0.1";
+    #system("ssh dev-ubuntu1204-x64-01.ci.local -L 5555:10.99.112.12:5555 -N &");
+    $android_to_connect="10.99.112.12";
     system("$adb_tool disconnect $android_to_connect");
     system("$adb_tool connect $android_to_connect");
     sleep(2);# let it connect
@@ -426,9 +426,10 @@ sub run_ios_test
     timeout $runtime => sub {
         $ios_ret = qx(${cmd});
     };
-
+    print "DBG: RAN $cmd \n";
+    print "DBG: $ios_ret\n";
     if ($@) {
-        print "Timed out ..... \n";
+        print "Timed out .....$@) \n";
         if ($insignificant) {
             print " Testrunner: $case failed, but it is marked with insignificant_test\n";
             push (@failures ,(basename($case)." [insignificant]")); 
@@ -643,7 +644,7 @@ sub run
         if ($platform eq "Android") {
             run_android_test($case, $insignificant);
         } elsif ($platform eq "IOS") {
-            $case = "Release-iphoneos/".basename($case);
+            #$case = "Release-iphoneos/".basename($case);
             run_ios_test($case, $insignificant);
         } elsif ($platform eq "WinRT") {
             run_winrt_test($case, $insignificant);
