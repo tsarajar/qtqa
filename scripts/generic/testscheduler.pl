@@ -192,16 +192,24 @@ sub run
     }
 
     if ( $ENV{ADB_DEVICE_IP} && $ENV{ADB_BIN_DIR} ) {
-	  my $cmd;
+      my $adb = catfile($ENV{ADB_BIN_DIR},"adb"); 
+      my $cmd;
       if ( $ENV{ADB_DEVICE_IP} =~ m/device/i ) {
-        $cmd = catfile($ENV{ADB_BIN_DIR},"adb")." devices";
+        $cmd = "$adb devices";
       } else {
-	    $cmd = catfile($ENV{ADB_BIN_DIR},"adb")." connect $ENV{ADB_DEVICE_IP}";
-	  }
-	  print "+ $cmd\n";
-	  system ($cmd);
-	}
-	
+        $cmd = "$adb connect $ENV{ADB_DEVICE_IP}";
+      }
+      print "+ $cmd\n";
+      system ($cmd);
+      
+      # get own ip address
+      my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
+      # mount own /work to device's /work
+      $cmd = "$adb shell mount -t nfs $addr:/work /work";
+      print "+ $cmd\n";
+      system ($cmd);
+    }
+    
     if ($self->{ parallel_stress } && $self->{ jobs } <= 1) {
         die q{error: --parallel-stress mode doesn't make sense with -j1};
     }
