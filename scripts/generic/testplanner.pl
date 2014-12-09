@@ -133,6 +133,8 @@ use QMake::Project;
 use Readonly;
 use Scalar::Defer qw(force);
 use JSON;
+use Sys::Hostname;
+use Socket;
 
 use FindBin;
 use lib "$FindBin::Bin/../lib/perl5";
