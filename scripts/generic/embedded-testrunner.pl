@@ -419,6 +419,7 @@ sub run_ios_test
 
     my $cmd = "ios-sim launch ${case} --stdout output.txt".
                                   " --stderr errors.txt".
+                                  " --devicetypeid com.apple.CoreSimulator.SimDeviceType.iPhone-5".
                                   " --timeout 60 2>&1";
     my $kill_cmd = "killall -v \"iPhone Simulator\"";
     my $runtime = $max_runtime*60;
