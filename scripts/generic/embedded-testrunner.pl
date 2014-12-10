@@ -619,9 +619,11 @@ sub run
     {
         exit (1) if (!android_connect());
     } elsif ($platform eq "IOS"){
-        my $log = qx("/usr/bin/curl http://qt-dev-ci.ci.local/userContent/files/ios-sim -o /work/build/qt/qtbase/bin/ios-sim");
+        my $cmd = "/usr/bin/curl http://qt-dev-ci.ci.local/userContent/files/ios-sim -o /work/build/qt/qtbase/bin/ios-sim";
+        my $log = qx(${cmd});
         print "WGET DBG $log\n";
-        $log = qx("/bin/chmod 755 /work/build/qt/qtbase/bin/ios-sim");
+        $cmd = "/bin/chmod 755 /work/build/qt/qtbase/bin/ios-sim";
+        $log = qx(${cmd});
         print "CHMOD DBG $log\n";
         $log = qx("which ios-sim");
         print "IOS_SIM DBG $log \n";
