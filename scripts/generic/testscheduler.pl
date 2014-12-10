@@ -141,6 +141,8 @@ use List::Util qw(sum max);
 use Pod::Usage;
 use Readonly;
 use Timer::Simple;
+use Sys::Hostname;
+use Socket;
 
 use Getopt::Long qw(
     GetOptionsFromArray
