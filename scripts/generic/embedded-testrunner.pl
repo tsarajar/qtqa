@@ -619,14 +619,16 @@ sub run
     {
         exit (1) if (!android_connect());
     } elsif ($platform eq "IOS"){
-        system("pushd /work/build/qt/qtbase/bin");
-        my $log = qx("curl http://qt-dev-ci.ci.local/userContent/files/ios-sim -o ios-sim");
+        my $log = qx("/usr/bin/curl http://qt-dev-ci.ci.local/userContent/files/ios-sim -o /work/build/qt/qtbase/bin/ios-sim");
         print "WGET DBG $log\n";
-        $log = qx("chmod 755 ios-sim");
+        $log = qx("/bin/chmod 755 /work/build/qt/qtbase/bin/ios-sim");
         print "CHMOD DBG $log\n";
-        system("popd");
-        $log = qx("which ios-sim);
+        $log = qx("which ios-sim");
         print "IOS_SIM DBG $log \n";
+        $log = qx("curl");
+        print "DBG: $log\n";
+        $log = qx("chmod");
+        print "DBG: $log\n";
         clean_ios_tests();
     } elsif ($platform eq "WinRT"){
         print "getting win tools to $qt_bin_dir \n";
