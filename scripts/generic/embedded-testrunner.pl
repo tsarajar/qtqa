@@ -571,7 +571,6 @@ sub start_android_test
 ##############################
 sub check_if_insignificant
 {
-    return 0 if ($platform eq "WinRT");
     print "Checking if insignificant\n" if ($verbose);
     print "In DIR : " if ($verbose);
     dir() if ($verbose);
@@ -579,13 +578,9 @@ sub check_if_insignificant
     my $case = shift;
     my $platform = shift;
     my $insignificant = 0;
+    return 0 if ($platform eq "WinRT");
     if ($platform eq "IOS" || $platform eq "WinRT") {
         pushd(abs_path(File::Spec->catdir(dirname($case))."/../"));
-        if ($platform eq "IOS") {
-            system("ls -l");
-        } else {
-            system("dir");
-        }
     } else {
         pushd(abs_path(dirname($case)));
     }
@@ -620,18 +615,19 @@ sub run
     {
         exit (1) if (!android_connect());
     } elsif ($platform eq "IOS"){
+        # This is kind of a hack until we update the node template.
         my $cmd = "/usr/bin/curl http://qt-dev-ci.ci.local/userContent/files/ios-sim -o /work/build/qt/qtbase/bin/ios-sim";
         my $log = qx(${cmd});
-        print "WGET DBG $log\n";
+        #print "WGET DBG $log\n";
         $cmd = "/bin/chmod 755 /work/build/qt/qtbase/bin/ios-sim";
         $log = qx(${cmd});
-        print "CHMOD DBG $log\n";
+        #print "CHMOD DBG $log\n";
         $log = qx("which ios-sim");
-        print "IOS_SIM DBG $log \n";
+        #print "IOS_SIM DBG $log \n";
         $log = qx("curl");
-        print "DBG: $log\n";
+        #print "DBG: $log\n";
         $log = qx("chmod");
-        print "DBG: $log\n";
+        #print "DBG: $log\n";
         clean_ios_tests();
     } elsif ($platform eq "WinRT"){
         print "getting win tools to $qt_bin_dir \n";
@@ -653,7 +649,6 @@ sub run
         $case =~ s/\R//g;
         print "$platform TestRunner: begin ".basename($case)."\n";
         my $insignificant = check_if_insignificant($case, $platform);
-        print "                -> test $case was set as I== $insignificant ==\n";
         if ($platform eq "Android") {
             run_android_test($case, $insignificant);
         } elsif ($platform eq "IOS") {
