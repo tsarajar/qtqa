@@ -427,8 +427,8 @@ sub run_ios_test
     timeout $runtime => sub {
         $ios_ret = qx(${cmd});
     };
-    print "DBG: RAN $cmd \n";
-    print "DBG: $ios_ret\n";
+    #print "DBG: RAN $cmd \n";
+    #print "DBG: $ios_ret\n";
     if ($@) {
         print "Timed out .....$@) \n";
         if ($insignificant) {
@@ -580,7 +580,9 @@ sub check_if_insignificant
     my $insignificant = 0;
     return 0 if ($platform eq "WinRT");
     if ($platform eq "IOS" || $platform eq "WinRT") {
-        pushd(abs_path(File::Spec->catdir(dirname($case))."/../"));
+        my $file_dir=abs_path($case);
+        $file_dir = abs_path("$file_dir/../../");
+        pushd($file_dir);
     } else {
         pushd(abs_path(dirname($case)));
     }
