@@ -618,18 +618,10 @@ sub run
         exit (1) if (!android_connect());
     } elsif ($platform eq "IOS"){
         # This is kind of a hack until we update the node template.
-        my $cmd = "/usr/bin/curl http://qt-dev-ci.ci.local/userContent/files/ios-sim -o /work/build/qt/qtbase/bin/ios-sim";
+        my $cmd = "/usr/bin/curl http://qt-dev-ci.ci.local/userContent/files/ios-sim -o /Users/qt/bin/ios-sim";
         my $log = qx(${cmd});
-        #print "WGET DBG $log\n";
-        $cmd = "/bin/chmod 755 /work/build/qt/qtbase/bin/ios-sim";
+        $cmd = "/bin/chmod 755 /Users/qt/bin/ios-sim";
         $log = qx(${cmd});
-        #print "CHMOD DBG $log\n";
-        $log = qx("which ios-sim");
-        #print "IOS_SIM DBG $log \n";
-        $log = qx("curl");
-        #print "DBG: $log\n";
-        $log = qx("chmod");
-        #print "DBG: $log\n";
         clean_ios_tests();
     } elsif ($platform eq "WinRT"){
         print "getting win tools to $qt_bin_dir \n";
