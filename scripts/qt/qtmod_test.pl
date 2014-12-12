@@ -1510,23 +1510,32 @@ sub _run_autotests_impl
         }
     }
 
+    my $resp;
     if ( $ENV{ADB_DEVICE} && $ENV{ADB_DEVICE_SW_VERSION}) {
-        print "Querying qt-ci-dev.ci.local:7399 for device\n";
-        my $string = qq({"type":"device-request","name":"$ENV{ADB_DEVICE}","version":"$ENV{ADB_DEVICE_SW_VERSION}"});
-        my $json = JSON->new->allow_nonref;
-        my $json_text = $json->encode($string);
-        my $remote = IO::Socket::INET->new( Proto     => "tcp",
-                                         PeerAddr  => "qt-ci-dev.ci.local",
-                                         PeerPort  => 7399,
-                                        );
-        unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
-        $remote->autoflush(1);
-        print $remote "$string";
-        my $resp;
-        while ( <$remote> ) { $resp .= $_; }
+        while (1) {
+            print "Querying qt-ci-dev.ci.local:7399 for device\n";
+            my $string = qq({"type":"device-request","name":"$ENV{ADB_DEVICE}","version":"$ENV{ADB_DEVICE_SW_VERSION}"});
+            print "JSON: $string\n";
+            my $json = JSON->new->allow_nonref;
+            my $json_text = $json->encode($string);
+            my $remote = IO::Socket::INET->new( Proto     => "tcp",
+                                             PeerAddr  => "qt-ci-dev.ci.local",
+                                             PeerPort  => 7399,
+                                            );
+            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
+            $remote->autoflush(1);
+            print $remote "$string";
+            while ( <$remote> ) { $resp .= $_; }
+            close $remote;
+            chomp($resp);
+
+            last if (defined $resp and $resp ne "");
+            print "Did not receive device. Reattempting in 5 minutes\n";
+            sleep (300);
+        }
+
         $ENV{ADB_DEVICE_IP} = $resp;
         print "Received device IP: $ENV{ADB_DEVICE_IP}\n";
-        close $remote;
     }
 
 
