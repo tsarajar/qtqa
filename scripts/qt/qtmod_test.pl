@@ -55,6 +55,8 @@ use autodie;
 use Readonly;
 use Text::Trim;
 use Cwd;
+use JSON;
+use IO::Socket;
 
 #Code coverage tools
 Readonly my $TESTCOCOON  => 'testcocoon';
@@ -1507,6 +1509,26 @@ sub _run_autotests_impl
             Env::Path->QMAKEPATH->Prepend( canonpath catfile( $qt_build_dir, 'qtbase' ) );
         }
     }
+
+    if ( $ENV{ADB_DEVICE} && $ENV{ADB_DEVICE_SW_VERSION}) {
+        print "Querying qt-ci-dev.ci.local:7399 for device\n";
+        my $string = qq({"type":"device-request","name":"$ENV{ADB_DEVICE}","version":"$ENV{ADB_DEVICE_SW_VERSION}"});
+        my $json = JSON->new->allow_nonref;
+        my $json_text = $json->encode($string);
+        my $remote = IO::Socket::INET->new( Proto     => "tcp",
+                                         PeerAddr  => "qt-ci-dev.ci.local",
+                                         PeerPort  => 7399,
+                                        );
+        unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
+        $remote->autoflush(1);
+        print $remote "$string";
+        my $resp;
+        while ( <$remote> ) { $resp .= $_; }
+        $ENV{ADB_DEVICE_IP} = $resp;
+        print "Received device IP: $ENV{ADB_DEVICE_IP}\n";
+        close $remote;
+    }
+
 
     my $run = sub {
         chdir( $tests_dir );

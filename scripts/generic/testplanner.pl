@@ -132,8 +132,6 @@ use Pod::Usage;
 use QMake::Project;
 use Readonly;
 use Scalar::Defer qw(force);
-use JSON;
-use IO::Socket;
 
 use FindBin;
 use lib "$FindBin::Bin/../lib/perl5";
@@ -165,12 +163,6 @@ sub run
         'makefile=s' => \$self->{ makefile },
         'testcase' => \$testcase,
     ) || pod2usage(2);
-
-    # At initial launch of the script, set device ip address in
-    # the environment variable
-    if (!caller) {
-        set_device_ip();
-    }
 
     # Testcase mode; we're calling ourselves for one specific testcase.
     # The remaining args are the testcase command and arguments.
@@ -463,30 +455,6 @@ sub resolved_makefile
 
     return $calling_makefile;
 }
-
-sub set_device_ip
-{
-    my ($self, @args) = @_;
-    if ( $ENV{ADB_DEVICE} && $ENV{ADB_DEVICE_SW_VERSION}) {
-        print "Querying qt-ci-dev.ci.local:7399 for device\n";
-        my $string = qq({"type":"device-request","name":"$ENV{ADB_DEVICE}","version":"$ENV{ADB_DEVICE_SW_VERSION}"});
-        my $json = JSON->new->allow_nonref;
-        my $json_text = $json->encode($string);
-        my $remote = IO::Socket::INET->new( Proto     => "tcp",
-                                         PeerAddr  => "qt-ci-dev.ci.local",
-                                         PeerPort  => 7399,
-                                        );
-        unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
-        $remote->autoflush(1);
-        print $remote "$string";
-        my $resp;
-        while ( <$remote> ) { $resp .= $_; }
-        $ENV{ADB_DEVICE_IP} = $resp;
-        print "Received device IP: $ENV{ADB_DEVICE_IP}\n";
-        close $remote;
-    }
-}
-
 
 sub plan_testcase
 {
