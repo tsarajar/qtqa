@@ -481,7 +481,8 @@ sub plan_testcase
     );
     my @qmake_keys = (@qmake_tests, @qmake_scalar_values);
 	
-	if ( $ENV{ADB_DEVICE} && $ENV{ADB_DEVICE_SW_VERSION}) {
+    if ( $ENV{ADB_DEVICE} && $ENV{ADB_DEVICE_SW_VERSION}) {
+        print "Querying qt-ci-dev.ci.local:7399 for device\n";
         my $string = qq({"type":"device-request","name":"$ENV{ADB_DEVICE}","version":"$ENV{ADB_DEVICE_SW_VERSION}"});
         my $json = JSON->new->allow_nonref;
         my $json_text = $json->encode($string);
@@ -489,25 +490,26 @@ sub plan_testcase
                                          PeerAddr  => "qt-ci-dev.ci.local",
                                          PeerPort  => 7399,
                                         );
-        unless ($remote) { die "cannot connect to http daemon on qt-ci-dev.ci.local" }
+        unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
         $remote->autoflush(1);
         print $remote "$string";
         my $resp;
         while ( <$remote> ) { $resp .= $_; }
-		$ENV{ADB_DEVICE_IP} = $resp;
+        $ENV{ADB_DEVICE_IP} = $resp;
+        print "Received device IP: $ENV{ADB_DEVICE_IP}\n";
         close $remote;
-	}
+    }
 	
-	#if ADB_DEVICE_IP and ADB_BIN_DIR are both defined,
-	#then modify launch command to run the test on target device
-	my @testcaseargs = ();
-	if ( $ENV{ADB_DEVICE_IP} && $ENV{ADB_BIN_DIR} ) {
-	   push (@testcaseargs, "shell");
-	   push (@testcaseargs, "export LD_LIBRARY_PATH=\$LD_LIBARY_PATH:/work/build/qtbase/lib&&".
-	                        "export QT_QPA_PLATFORM_PLUGIN_PATH=/work/build/qtbase/plugins/platforms&&".
-							catfile($CWD,$testcase));
-	   $testcase = catfile($ENV{ADB_BIN_DIR},"adb");
-	}
+    #if ADB_DEVICE_IP and ADB_BIN_DIR are both defined,
+    #then modify launch command to run the test on target device
+    my @testcaseargs = ();
+    if ( $ENV{ADB_DEVICE_IP} && $ENV{ADB_BIN_DIR} ) {
+       push (@testcaseargs, "shell");
+       push (@testcaseargs, "export LD_LIBRARY_PATH=\$LD_LIBARY_PATH:/work/build/qtbase/lib&&".
+                            "export QT_QPA_PLATFORM_PLUGIN_PATH=/work/build/qtbase/plugins/platforms&&".
+                            catfile($CWD,$testcase));
+       $testcase = catfile($ENV{ADB_BIN_DIR},"adb");
+    }
 
     my %info = (
         args => [ $testcase, @args ],
