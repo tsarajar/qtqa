@@ -166,6 +166,12 @@ sub run
         'testcase' => \$testcase,
     ) || pod2usage(2);
 
+    # At initial launch of the script, set device ip address in
+    # the environment variable
+    if (!caller) {
+        set_device_ip();
+    }
+
     # Testcase mode; we're calling ourselves for one specific testcase.
     # The remaining args are the testcase command and arguments.
     if ($testcase) {
@@ -458,6 +464,30 @@ sub resolved_makefile
     return $calling_makefile;
 }
 
+sub set_device_ip
+{
+    my ($self, @args) = @_;
+    if ( $ENV{ADB_DEVICE} && $ENV{ADB_DEVICE_SW_VERSION}) {
+        print "Querying qt-ci-dev.ci.local:7399 for device\n";
+        my $string = qq({"type":"device-request","name":"$ENV{ADB_DEVICE}","version":"$ENV{ADB_DEVICE_SW_VERSION}"});
+        my $json = JSON->new->allow_nonref;
+        my $json_text = $json->encode($string);
+        my $remote = IO::Socket::INET->new( Proto     => "tcp",
+                                         PeerAddr  => "qt-ci-dev.ci.local",
+                                         PeerPort  => 7399,
+                                        );
+        unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
+        $remote->autoflush(1);
+        print $remote "$string";
+        my $resp;
+        while ( <$remote> ) { $resp .= $_; }
+        $ENV{ADB_DEVICE_IP} = $resp;
+        print "Received device IP: $ENV{ADB_DEVICE_IP}\n";
+        close $remote;
+    }
+}
+
+
 sub plan_testcase
 {
     my ($self, $testcase, @args) = @_;
@@ -480,25 +510,6 @@ sub plan_testcase
         testcase.timeout
     );
     my @qmake_keys = (@qmake_tests, @qmake_scalar_values);
-	
-    if ( $ENV{ADB_DEVICE} && $ENV{ADB_DEVICE_SW_VERSION}) {
-        print "Querying qt-ci-dev.ci.local:7399 for device\n";
-        my $string = qq({"type":"device-request","name":"$ENV{ADB_DEVICE}","version":"$ENV{ADB_DEVICE_SW_VERSION}"});
-        my $json = JSON->new->allow_nonref;
-        my $json_text = $json->encode($string);
-        my $remote = IO::Socket::INET->new( Proto     => "tcp",
-                                         PeerAddr  => "qt-ci-dev.ci.local",
-                                         PeerPort  => 7399,
-                                        );
-        unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
-        $remote->autoflush(1);
-        print $remote "$string";
-        my $resp;
-        while ( <$remote> ) { $resp .= $_; }
-        $ENV{ADB_DEVICE_IP} = $resp;
-        print "Received device IP: $ENV{ADB_DEVICE_IP}\n";
-        close $remote;
-    }
 	
     #if ADB_DEVICE_IP and ADB_BIN_DIR are both defined,
     #then modify launch command to run the test on target device
