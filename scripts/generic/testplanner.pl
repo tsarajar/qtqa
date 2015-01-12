@@ -491,7 +491,7 @@ sub plan_testcase
     }
 
     my %info = (
-        args => [ $testcase, @args ],
+        args => [ $testcase, @testcaseargs, @args ],
         cwd => $CWD,
         map( { my $v = $prj->test( $_ ); $_ => $v } @qmake_tests),
         map( { my $v = $prj->values( $_ ); $_ => $v } @qmake_scalar_values),
