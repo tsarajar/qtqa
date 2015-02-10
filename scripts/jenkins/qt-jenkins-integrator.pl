@@ -1932,7 +1932,7 @@ sub do_state_cancel_jenkins_build
         url => "$build->{ url }/stop",
         headers => $self->http_headers(),
         # as a slight oddity, Jenkins may respond to this with HTTP 302
-        accept_status => [200, 302],
+        accept_status => [200, 302, 405],
     );
 
     # Don't bother with another round-trip to fetch the build's state again,
