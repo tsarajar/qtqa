@@ -204,6 +204,9 @@ sub run
       print "+ $cmd\n";
       system ($cmd);
       
+      # Test if a few second sleep after connect allows for mount to work and device doesn't return 'offline'
+      sleep(5);
+
       # get own ip address
       my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
       # mount own /work to device's /work

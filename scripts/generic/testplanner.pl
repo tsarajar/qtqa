@@ -484,9 +484,7 @@ sub plan_testcase
     my @testcaseargs = ();
     if ( $ENV{ADB_DEVICE_IP} && $ENV{ADB_BIN_DIR} ) {
        push (@testcaseargs, "shell");
-       push (@testcaseargs, "export LD_LIBRARY_PATH=\$LD_LIBARY_PATH:/work/build/qtbase/lib&&".
-                            "export QT_QPA_PLATFORM_PLUGIN_PATH=/work/build/qtbase/plugins/platforms&&".
-                            catfile($CWD,$testcase));
+       push (@testcaseargs, catfile($CWD,$testcase));
        $testcase = catfile($ENV{ADB_BIN_DIR},"adb");
     }
 
