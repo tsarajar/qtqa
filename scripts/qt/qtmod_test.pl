@@ -1532,13 +1532,13 @@ sub _run_autotests_impl
             print $remote "$string";
             while ( <$remote> ) { $resp .= $_; }
             close $remote;
-            chomp($resp);
 
             last if (defined $resp and $resp ne "");
             print "Did not receive device. Reattempting in 5 minutes\n";
             sleep (300);
         }
 
+        chomp($resp);
         $ENV{ADB_DEVICE_IP} = $resp;
         print "Received device IP: $ENV{ADB_DEVICE_IP}\n";
     }
