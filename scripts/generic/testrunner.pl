@@ -514,8 +514,14 @@ sub generate_unique_logfile_name
     # This would be indicative of some problem with the test setup.
     #
     my $suffix   = $args_ref->{ suffix } || '.txt';
-    my $basename = basename( ($self->command())[0] );
-
+    # We use label as a basename so that in cases of test preceeding with 'adb shell' or
+    # 'prove' we dont' get logs that begin with adb- or prove-
+    my $basename;
+    if ($self->{ label }) {
+        $basename = $self->{ label };
+    } else {
+        $basename = basename( ($self->command())[0] );
+    }
     # basename is now e.g. tst_qstring
 
     if (defined $args_ref->{ basename }) {

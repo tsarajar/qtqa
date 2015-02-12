@@ -209,6 +209,10 @@ sub run
 
       # get own ip address
       my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
+      # Make sure that /work exists so that it can be mounted to
+      $cmd = "$adb shell mkdir /work";
+      print "+ $cmd\n";
+      system ($cmd);
       # mount own /work to device's /work
       $cmd = "$adb shell mount -t nfs $addr:/work /work";
       print "+ $cmd\n";
