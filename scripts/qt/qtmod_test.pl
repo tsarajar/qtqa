@@ -1486,12 +1486,6 @@ sub _run_autotests_impl
         $do_compile = 0;
         $qt_tests_testscheduler = 0;
     }
-    # This is kind of a hack until we update the node template.
-    my $sim_cmd = "/usr/bin/curl http://qt-dev-ci.ci.local/userContent/files/ios-sim -o /Users/qt/bin/ios-sim";
-    my $sim_log = qx(${sim_cmd});
-    $sim_cmd = "/bin/chmod 755 /Users/qt/bin/ios-sim";
-    $sim_log = qx(${sim_cmd});
-
     # Add tools from all the modules to PATH.
     # If shadow-build with install enabled, then we need to add install path
     # rather than build path into the PATH.
