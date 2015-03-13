@@ -218,7 +218,25 @@ sub run
       print "+ $cmd\n";
       system ($cmd);
     }
-    
+
+    if ( $ENV{SSH_DEVICE_IP} && $ENV{SSH_BIN_DIR} && $ENV{SSHPASS_BIN_DIR} ) {
+      my $SSH_BIN = catfile($ENV{SSH_BIN_DIR},"ssh");
+      my $SSHPASS_BIN = catfile($ENV{SSHPASS_BIN_DIR},"sshpass");
+
+      # get own ip address
+      my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
+
+      # Make sure that /work exists so that it can be mounted to
+      my $cmd = "$SSHPASS_BIN -p$ENV{SSH_DEVICE_PASS} $ENV{SSH_DEVICE_USER}@$ENV{SSH_DEVICE_IP} mkdir /work";
+      print "+ $cmd\n";
+      system ($cmd);
+
+      # mount own /work to device's /work
+      $cmd = "$SSHPASS_BIN -p$ENV{SSH_DEVICE_PASS} $ENV{SSH_DEVICE_USER}@$ENV{SSH_DEVICE_IP} mount -t nfs $addr:/work /work";
+      print "+ $cmd\n";
+      system ($cmd);
+    }
+
     if ($self->{ parallel_stress } && $self->{ jobs } <= 1) {
         die q{error: --parallel-stress mode doesn't make sense with -j1};
     }

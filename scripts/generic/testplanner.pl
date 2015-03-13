@@ -478,15 +478,30 @@ sub plan_testcase
         testcase.timeout
     );
     my @qmake_keys = (@qmake_tests, @qmake_scalar_values);
-	
+
+    my @testcaseargs = ();
     #if ADB_DEVICE_IP and ADB_BIN_DIR are both defined,
     #then modify launch command to run the test on target device
-    my @testcaseargs = ();
     if ( $ENV{ADB_DEVICE_IP} && $ENV{ADB_BIN_DIR} ) {
        push (@testcaseargs, "shell");
        push (@testcaseargs, catfile($CWD,$testcase));
        $testcase = catfile($ENV{ADB_BIN_DIR},"adb");
     }
+
+    #if SSH_DEVICE_IP and SSH_BIN_DIR are both defined,
+    #then modify launch command to run the test on target device
+    if ( $ENV{SSH_DEVICE_IP} && $ENV{SSH_BIN_DIR} && $ENV{SSHPASS_BIN_DIR} && $ENV{SSH_DEVICE_USER} && $ENV{SSH_DEVICE_PASSWD}) {
+	   my $SSH_BIN = catfile($ENV{SSH_BIN_DIR},"ssh");
+	   my $TEST_BIN = catfile($CWD,$testcase);
+	   if ($ENV{TEST_BIN_WRAPPER}) {
+	       my $TEST_BIN_TMP = $ENV{TEST_BIN_WRAPPER};
+		   $TEST_BIN_TMP =~ s/\%TEST_BIN\%/$TEST_BIN/g;
+		   $TEST_BIN = $TEST_BIN_TMP;
+	   }
+       push (@testcaseargs, "-p $ENV{SSH_DEVICE_PASSWD} $SSH_BIN $ENV{SSH_DEVICE_USER}@$ENV{SSH_DEVICE_IP} $TEST_BIN");
+       $testcase = catfile($ENV{SSHPASS_BIN_DIR},"sshpass");
+    }
+
 
     my %info = (
         args => [ $testcase, @testcaseargs, @args ],
