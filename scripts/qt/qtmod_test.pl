@@ -190,6 +190,9 @@ my @PROPERTIES = (
                                => q{arguments to pass to testscheduler, if any; for example, -j4 }
                                 . q{to run autotests in parallel},
 
+    q{qt.ignore.tst.compile}
+                               => q{ignores the result of compiling tests and continues anyways },
+
     q{qt.tests.flaky.enabled}   => q{enable flaky test plugin },
 
     q{qt.tests.flaky_mode}     => q{how to handle flaky autotests ("best", "worst" or "ignore")},
@@ -563,6 +566,7 @@ sub read_and_store_configuration
         'qt.qtqa-tests.enabled'         => 0                                     ,
         'qt.qtqa-tests.insignificant'   => 0                                     ,
         'qt.sync.profile.dir'     => q{}                                         ,
+        'qt.ignore.tst.compile'   => 0                                           ,
 
         'qt.patch.first'          => q{}                                         ,
         'qt.patch.second'         => q{}                                         ,
@@ -1054,6 +1058,7 @@ sub run_compile
     my $qt_configure_extra_args = $self->{ 'qt.configure.extra_args' };
     my $qt_make_install         = $self->{ 'qt.make_install'         };
     my $qt_minimal_deps         = $self->{ 'qt.minimal_deps'         };
+    my $qt_ignore_tst_compile   = $self->{ 'qt.ignore.tst.compile'   };
 
     my $qmake_bin = catfile( $qt_build_dir, 'qtbase', 'bin', 'qmake' );
     my $qmake_install_bin = catfile( $qt_install_dir, 'bin', 'qmake' );
@@ -1122,8 +1127,22 @@ sub run_compile
         push @commands, sub { $self->exe( $make_bin, @make_args ) };
     }
 
-    foreach my $command (@commands) {
-        $command->();
+    eval {
+        foreach my $command (@commands) {
+            $command->();
+        }
+    };
+    if ($EVAL_ERROR) {
+        if ($qt_ignore_tst_compile) {
+            warn "$EVAL_ERROR\n"
+            .qq{Compiling tests failed! This only a warning, because qt_ignore_tst_compile is set.};
+        }
+        else {
+            exit ($EVAL_ERROR);
+        }
+    }
+    else {
+         print "Compile of tests succeeded.\n";
     }
 
     return;
