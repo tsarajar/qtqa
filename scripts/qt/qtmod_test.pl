@@ -1580,7 +1580,7 @@ sub _run_autotests_impl
 
         chomp($resp);
         $ENV{SSH_DEVICE_IP} = $resp;
-        print "Received device IP: $ENV{ADB_DEVICE_IP}\n";
+        print "Received device IP: $ENV{SSH_DEVICE_IP}\n";
     }
 
     my $run = sub {

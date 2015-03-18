@@ -498,7 +498,12 @@ sub plan_testcase
 		   $TEST_BIN_TMP =~ s/\%TEST_BIN\%/$TEST_BIN/g;
 		   $TEST_BIN = $TEST_BIN_TMP;
 	   }
-       push (@testcaseargs, "-p $ENV{SSH_DEVICE_PASSWD} $SSH_BIN $ENV{SSH_DEVICE_USER}@$ENV{SSH_DEVICE_IP} $TEST_BIN");
+#       print "testcaseargs: -p $ENV{SSH_DEVICE_PASSWD}\n";
+#       print "testcaseargs: $SSH_BIN\n";
+#       print "testcaseargs: $ENV{SSH_DEVICE_USER}@\n";
+#       print "testcaseargs: $ENV{SSH_DEVICE_IP}\n";
+#       print "testcaseargs: $TEST_BIN\n";
+       push (@testcaseargs, "-p $ENV{SSH_DEVICE_PASSWD} $SSH_BIN $ENV{SSH_DEVICE_USER}\@$ENV{SSH_DEVICE_IP} $TEST_BIN");
        $testcase = catfile($ENV{SSHPASS_BIN_DIR},"sshpass");
     }
 
