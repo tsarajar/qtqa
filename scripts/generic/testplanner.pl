@@ -622,7 +622,7 @@ sub run_make_check
     );
 
     if (my $status = system( @command )) {
-        die "testplan generation failed; @command exited with status $status (exit code ".($status >> 8).')';
+        warn "testplan generation failed; @command exited with status $status (exit code ".($status >> 8).')';
     }
 
     return;
