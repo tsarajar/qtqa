@@ -503,7 +503,7 @@ sub plan_testcase
 #       print "testcaseargs: $ENV{SSH_DEVICE_USER}@\n";
 #       print "testcaseargs: $ENV{SSH_DEVICE_IP}\n";
 #       print "testcaseargs: $TEST_BIN\n";
-       push (@testcaseargs, "-p $ENV{SSH_DEVICE_PASSWD} $SSH_BIN $ENV{SSH_DEVICE_USER}\@$ENV{SSH_DEVICE_IP} $TEST_BIN");
+       push (@testcaseargs, "-p '$ENV{SSH_DEVICE_PASSWD}' $SSH_BIN $ENV{SSH_DEVICE_USER}\@$ENV{SSH_DEVICE_IP} \"$TEST_BIN\"");
        $testcase = catfile($ENV{SSHPASS_BIN_DIR},"sshpass");
     }
 
