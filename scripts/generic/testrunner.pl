@@ -1264,6 +1264,15 @@ sub do_subprocess
             qx{${kill_cmd}};
         }
 
+        if ($ENV{TEST_BIN_WRAPPER}) {
+            my $TEST_BIN_TMP = $ENV{TEST_BIN_WRAPPER};
+            my $TEST_BIN = join (" ",@command);
+            $TEST_BIN_TMP =~ s/\%TEST_BIN\%/$TEST_BIN/g;
+            @command = ();
+            push (@command, $TEST_BIN_TMP);
+        }
+
+
         $self->plugins_about_to_run( \@command );
 
         {

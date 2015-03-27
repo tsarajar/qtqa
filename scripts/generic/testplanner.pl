@@ -493,11 +493,6 @@ sub plan_testcase
     if ( $ENV{SSH_DEVICE_IP} && $ENV{SSH_BIN_DIR} && $ENV{SSHPASS_BIN_DIR} && $ENV{SSH_DEVICE_USER} && $ENV{SSH_DEVICE_PASSWD}) {
 	   my $SSH_BIN = catfile($ENV{SSH_BIN_DIR},"ssh");
 	   my $TEST_BIN = catfile($CWD,$testcase);
-	   if ($ENV{TEST_BIN_WRAPPER}) {
-	       my $TEST_BIN_TMP = $ENV{TEST_BIN_WRAPPER};
-		   $TEST_BIN_TMP =~ s/\%TEST_BIN\%/$TEST_BIN/g;
-		   $TEST_BIN = $TEST_BIN_TMP;
-	   }
 #       print "testcaseargs: -p $ENV{SSH_DEVICE_PASSWD}\n";
 #       print "testcaseargs: $SSH_BIN\n";
 #       print "testcaseargs: $ENV{SSH_DEVICE_USER}@\n";

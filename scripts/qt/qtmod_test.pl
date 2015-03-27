@@ -1653,6 +1653,45 @@ sub _run_autotests_impl
         $run->();
     }
 
+    if (defined $ENV{ADB_DEVICE_IP}) {
+            print "Releasing '$ENV{ADB_DEVICE_IP}' from usage at qt-ci-dev.ci.local:7399.\n";
+            my $string = qq({"type":"device-release","ip":"$ENV{ADB_DEVICE_IP}"});
+            print "JSON: $string\n";
+            my $json = JSON->new->allow_nonref;
+            my $json_text = $json->encode($string);
+            my $remote = IO::Socket::INET->new( Proto     => "tcp",
+                                             PeerAddr  => "qt-ci-dev.ci.local",
+                                             PeerPort  => 7399,
+                                            );
+            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
+            $remote->autoflush(1);
+            print $remote "$string";
+            while ( <$remote> ) { $resp .= $_; }
+            close $remote;
+
+        chomp($resp);
+        print "qt-ci-dev.ci.local returned $resp\n";
+    }
+
+    if (defined $ENV{SSH_DEVICE_IP}) {
+            print "Releasing '$ENV{SSH_DEVICE_IP}' from usage at qt-ci-dev.ci.local:7399.\n";
+            my $string = qq({"type":"device-release","ip":"$ENV{SSH_DEVICE_IP}"});
+            print "JSON: $string\n";
+            my $json = JSON->new->allow_nonref;
+            my $json_text = $json->encode($string);
+            my $remote = IO::Socket::INET->new( Proto     => "tcp",
+                                             PeerAddr  => "qt-ci-dev.ci.local",
+                                             PeerPort  => 7399,
+                                            );
+            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
+            $remote->autoflush(1);
+            print $remote "$string";
+            while ( <$remote> ) { $resp .= $_; }
+            close $remote;
+
+        chomp($resp);
+        print "qt-ci-dev.ci.local returned $resp\n";
+    }
     return;
 }
 
