@@ -227,12 +227,12 @@ sub run
       my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
 
       # Make sure that /work exists so that it can be mounted to
-      my $cmd = "$SSHPASS_BIN -p '$ENV{SSH_DEVICE_PASSWD}' $SSH_BIN $ENV{SSH_DEVICE_USER}@$ENV{SSH_DEVICE_IP} \"mkdir /work\"";
+      my $cmd = "$SSHPASS_BIN -p '$ENV{SSH_DEVICE_PASSWD}' $SSH_BIN $ENV{SSH_DEVICE_USER}\@$ENV{SSH_DEVICE_IP} \"mkdir /work\"";
       print "+ $cmd\n";
       system ($cmd);
 
       # mount own /work to device's /work
-      $cmd = "$SSHPASS_BIN -p '$ENV{SSH_DEVICE_PASSWD}' $SSH_BIN $ENV{SSH_DEVICE_USER}@$ENV{SSH_DEVICE_IP} \"mount -t nfs $addr:/work /work\"";
+      $cmd = "$SSHPASS_BIN -p '$ENV{SSH_DEVICE_PASSWD}' $SSH_BIN $ENV{SSH_DEVICE_USER}\@$ENV{SSH_DEVICE_IP} \"mount -t nfs $addr:/work /work\"";
       print "+ $cmd\n";
       system ($cmd);
     }
