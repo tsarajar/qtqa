@@ -1331,7 +1331,6 @@ sub print_test_begin_info
 
     my $label = $self->label( );
     $label =~ s{:}{_}g;
-    my $cwd = $self->cwd( );
 
     my @command = $self->pretty_printed_command( );
 
