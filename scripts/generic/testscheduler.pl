@@ -151,7 +151,9 @@ use Getopt::Long qw(
 
 # testrunner script
 Readonly my $TESTRUNNER => catfile( $FindBin::Bin, 'testrunner.pl' );
-
+Readonly my $BUBAMOUNT => catfile( $FindBin::Bin, 'bubamount.exp' );
+Readonly my $BUBAUNMOUNT => catfile( $FindBin::Bin, 'bubaunmount.exp' );
+Readonly my $BUBA => catfile( $FindBin::Bin, 'buba.exp' );
 # declarations of static functions
 sub timestr;
 
@@ -220,9 +222,6 @@ sub run
     }
 
     if ( $ENV{SSH_DEVICE_IP} && $ENV{SSH_BIN_DIR} && $ENV{SSHPASS_BIN_DIR} ) {
-      my $SSH_BIN = catfile($ENV{SSH_BIN_DIR},"ssh");
-      my $SSHPASS_BIN = catfile($ENV{SSHPASS_BIN_DIR},"sshpass");
-
       # get own ip address
       my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
 
@@ -236,22 +235,6 @@ sub run
 #      print "+ $cmd\n";
 #      system ($cmd);
 
-      # Add host
-      my $cmd = "$SSHPASS_BIN -p '$ENV{SSH_DEVICE_PASSWD}' $SSH_BIN $ENV{SSH_DEVICE_USER}\@$ENV{SSH_DEVICE_IP} 'hostAdd \"CI\", \"$addr\"'";
-      print "+ $cmd\n";
-      system ($cmd);
-
-      sleep 1;
-
-      # nfsMountAll
-      $cmd = "$SSHPASS_BIN -p '$ENV{SSH_DEVICE_PASSWD}' $SSH_BIN $ENV{SSH_DEVICE_USER}\@$ENV{SSH_DEVICE_IP} 'nfsMountAll \"CI\"'";
-      print "+ $cmd\n";
-      system ($cmd);
-
-      # nfsMount
-      $cmd = "$SSHPASS_BIN -p '$ENV{SSH_DEVICE_PASSWD}' $SSH_BIN $ENV{SSH_DEVICE_USER}\@$ENV{SSH_DEVICE_IP} 'nfsMountAll \"CI\", \"/work\", \"/work\"'";
-      print "+ $cmd\n";
-      system ($cmd);
     }
 
     if ($self->{ parallel_stress } && $self->{ jobs } <= 1) {
@@ -713,10 +696,28 @@ sub execute_serial_tests
     return unless @tests;
 
     while (my $test = shift @tests) {
-        while ($self->running_tests_count()) {
-            $self->wait_for_test_to_complete( );
+        if ($ENV{SSH_DEVICE_USER} && $ENV{SSH_DEVICE_PASSWD} && $ENV{SSH_DEVICE_IP}) {
+            my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
+
+            die if (!$addr);
+            # TODO reset device here
+            print "Mounting host to device\n";
+            system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
+
+            $self->spawn_subtest( test => $test );
+
+            while ($self->running_tests_count()) {
+                $self->wait_for_test_to_complete( );
+            }
+            print "Unmounting host from device\n";
+            system ("$BUBAUNMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
+        } else {
+            exit 1;
+            while ($self->running_tests_count()) {
+                $self->wait_for_test_to_complete( );
+            }
+            $self->spawn_subtest( test => $test );
         }
-        $self->spawn_subtest( test => $test );
     }
 
     while ($self->running_tests_count()) {
