@@ -139,6 +139,7 @@ use lib "$FindBin::Bin/../lib/perl5";
 use autodie;
 
 Readonly my $WINDOWS => ($OSNAME =~ m{win32}i);
+Readonly my $BUBA => catfile( $FindBin::Bin, 'buba.exp' );
 
 sub new
 {
