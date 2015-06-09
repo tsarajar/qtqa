@@ -1552,8 +1552,20 @@ sub _run_autotests_impl
         }
 
         chomp($resp);
-        $ENV{ADB_DEVICE_IP} = $resp;
-        print "Received device IP: $ENV{ADB_DEVICE_IP}\n";
+        my $json;
+        eval {
+            $json = parse_json($resp);
+        };
+        if ($@) {
+            print "Can't figure out response JSON: $resp\n";
+        }
+        if ($json) {
+            $ENV{ADB_DEVICE_IP} = $json->{'ip'};
+            $ENV{POWER_SWITCH_IP} = $json->{'switch_ip'};
+            $ENV{POWER_SWITCH_MODULE} = $json->{'switch_module'};
+            $ENV{POWER_MODULE_OUTLET} = $json->{'switch_outlet'};
+            print "Received device IP: $ENV{ADB_DEVICE_IP}\n";
+        }
     }
 
     if ( $ENV{SSH_DEVICE} && $ENV{SSH_DEVICE_SW_VERSION}) {
