@@ -1565,6 +1565,11 @@ sub _run_autotests_impl
             $ENV{POWER_SWITCH_MODULE} = $json->{'switch_module'};
             $ENV{POWER_MODULE_OUTLET} = $json->{'switch_outlet'};
             print "Received device IP: $ENV{ADB_DEVICE_IP}\n";
+            if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "")) {
+                print "Received Power Switch IP: $ENV{POWER_SWITCH_IP}.\n";
+                print "Received Power Switch Module: $ENV{POWER_SWITCH_MODULE}.\n";
+                print "Received Power Switch Module Outlet: $ENV{POWER_OUTLET_NUMBER}.\n";
+            }
         }
     }
 
@@ -1591,8 +1596,25 @@ sub _run_autotests_impl
         }
 
         chomp($resp);
-        $ENV{SSH_DEVICE_IP} = $resp;
-        print "Received device IP: $ENV{SSH_DEVICE_IP}\n";
+        my $json;
+        eval {
+            $json = parse_json($resp);
+        };
+        if ($@) {
+            print "Can't figure out response JSON: $resp\n";
+        }
+        if ($json) {
+            $ENV{SSH_DEVICE_IP} = $json->{'ip'};
+            $ENV{POWER_SWITCH_IP} = $json->{'switch_ip'};
+            $ENV{POWER_SWITCH_MODULE} = $json->{'switch_module'};
+            $ENV{POWER_MODULE_OUTLET} = $json->{'switch_outlet'};
+            print "Received device IP: $ENV{SSH_DEVICE_IP}\n";
+            if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "")) {
+                print "Received Power Switch IP: $ENV{POWER_SWITCH_IP}.\n";
+                print "Received Power Switch Module: $ENV{POWER_SWITCH_MODULE}.\n";
+                print "Received Power Switch Module Outlet: $ENV{POWER_OUTLET_NUMBER}.\n";
+            }
+        }
     }
 
     my $run = sub {
