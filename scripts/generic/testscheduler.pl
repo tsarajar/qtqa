@@ -154,6 +154,7 @@ Readonly my $TESTRUNNER => catfile( $FindBin::Bin, 'testrunner.pl' );
 Readonly my $BUBAMOUNT => catfile( $FindBin::Bin, 'bubamount.exp' );
 Readonly my $BUBAUNMOUNT => catfile( $FindBin::Bin, 'bubaunmount.exp' );
 Readonly my $BUBA => catfile( $FindBin::Bin, 'buba.exp' );
+Readonly my $POWERCYCLE => catfile ($FindBin::Bin, 'power_cycle.pl' );
 # declarations of static functions
 sub timestr;
 
@@ -700,7 +701,7 @@ sub execute_serial_tests
             my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
 
             die if (!$addr);
-            if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "") {
+            if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "")) {
                 system ("$POWERCYCLE --rebootandwait");
             }
             print "Mounting host to device\n";
