@@ -700,7 +700,9 @@ sub execute_serial_tests
             my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
 
             die if (!$addr);
-            # TODO reset device here
+            if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "") {
+                system ("$POWERCYCLE --rebootandwait");
+            }
             print "Mounting host to device\n";
             system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
 
