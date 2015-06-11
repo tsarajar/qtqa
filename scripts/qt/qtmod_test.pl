@@ -862,6 +862,36 @@ sub maybe_skip_revdep_test
     return;
 }
 
+sub replace_submodules_with_custom
+{
+    my ($self) = @_;
+    my $basedir = getcwd;
+    local $CWD = catdir($basedir, "qtbase");
+    $self->exe( 'git', 'remote', 'remove', 'origin' );
+    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://qt-gerrit.ci.local:29418/QtRD-15810/qtbase.git' );
+    $self->exe( 'git', 'remote', 'update' );
+    $self->exe( 'git', 'checkout', '-b', 'vxworks-5.5.0', 'qt-gerrit-qtbase/vxworks-5.5.0' );
+
+    local $CWD = catdir($basedir, "qtdeclarative");
+    $self->exe( 'git', 'remote', 'remove', 'origin' );
+    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://qt-gerrit.ci.local:29418/QtRD-15810/qtdeclarative.git' );
+    $self->exe( 'git', 'remote', 'update' );
+    $self->exe( 'git', 'checkout', '-b', 'vxworks-5.5.0', 'qt-gerrit-qtbase/vxworks-5.5.0' );
+
+    local $CWD = catdir($basedir, "qtmultimedia");
+    $self->exe( 'git', 'remote', 'remove', 'origin' );
+    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://qt-gerrit.ci.local:29418/QtRD-15810/qtmultimedia.git' );
+    $self->exe( 'git', 'remote', 'update' );
+    $self->exe( 'git', 'checkout', '-b', 'vxworks-5.5.0', 'qt-gerrit-qtbase/vxworks-5.5.0' );
+
+    local $CWD = catdir($basedir, "qtdoc");
+    $self->exe( 'git', 'remote', 'remove', 'origin' );
+    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://qt-gerrit.ci.local:29418/QtRD-15810/qtdoc.git' );
+    $self->exe( 'git', 'remote', 'update' );
+    $self->exe( 'git', 'checkout', '-b', 'vxworks-5.5.0', 'qt-gerrit-qtbase/vxworks-5.5.0' );
+}
+
+
 sub run_git_checkout
 {
     my ($self) = @_;
@@ -930,6 +960,9 @@ sub run_git_checkout
     # in the next step.
     if (@needed_modules || $qt_gitmodule eq 'qt5') {
         $self->do_init_repository( @needed_modules );
+    }
+    if ($qt_gitmodule eq 'qt5') {
+        $self->replace_submodules_with_custom();
     }
 
     # Now we need to set the submodule content equal to our tested module's base.dir
