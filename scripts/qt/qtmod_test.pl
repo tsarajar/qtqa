@@ -864,6 +864,7 @@ sub maybe_skip_revdep_test
 
 sub replace_submodules_with_custom
 {
+    print "Replacing submodules with vxworks customs.\n";
     my ($self) = @_;
     my $basedir = getcwd;
     local $CWD = catdir($basedir, "qtbase");
@@ -889,6 +890,7 @@ sub replace_submodules_with_custom
     $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://qt-gerrit.ci.local:29418/QtRD-15810/qtdoc.git' );
     $self->exe( 'git', 'remote', 'update' );
     $self->exe( 'git', 'checkout', '-b', 'vxworks-5.5.0', 'qt-gerrit-qtbase/vxworks-5.5.0' );
+    print "Replacing done.\n";
 }
 
 
