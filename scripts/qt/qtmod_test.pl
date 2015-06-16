@@ -1589,7 +1589,7 @@ sub _run_autotests_impl
         chomp($resp);
         my $json;
         eval {
-            $json = parse_json($resp);
+            $json = decode_json($resp);
         };
         if ($@) {
             print "Can't figure out response JSON: $resp\n";
@@ -1633,7 +1633,7 @@ sub _run_autotests_impl
         chomp($resp);
         my $json;
         eval {
-            $json = parse_json($resp);
+            $json = decode_json($resp);
         };
         if ($@) {
             print "Can't figure out response JSON: $resp\n";
