@@ -702,6 +702,8 @@ sub execute_serial_tests
 
             die if (!$addr);
             if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "")) {
+                print "Rebooting device at IP '$ENV{POWER_SWITCH_IP}'\n";
+                print "+ $POWERCYCLE --rebootandwait\n";
                 system ("$POWERCYCLE --rebootandwait");
             }
             print "Mounting host to device\n";

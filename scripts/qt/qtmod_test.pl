@@ -1595,6 +1595,7 @@ sub _run_autotests_impl
             print "Can't figure out response JSON: $resp\n";
         }
         if ($json) {
+            print "Parsing '$json'\n";
             $ENV{ADB_DEVICE_IP} = $json->{'ip'};
             $ENV{POWER_SWITCH_IP} = $json->{'switch_ip'};
             $ENV{POWER_SWITCH_MODULE} = $json->{'switch_module'};
