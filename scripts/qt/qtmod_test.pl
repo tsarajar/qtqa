@@ -1599,7 +1599,7 @@ sub _run_autotests_impl
             $ENV{ADB_DEVICE_IP} = $json->{'ip'};
             $ENV{POWER_SWITCH_IP} = $json->{'switch_ip'};
             $ENV{POWER_SWITCH_MODULE} = $json->{'switch_module'};
-            $ENV{POWER_MODULE_OUTLET} = $json->{'switch_outlet'};
+            $ENV{POWER_OUTLET_NUMBER} = $json->{'switch_outlet'};
             print "Received device IP: $ENV{ADB_DEVICE_IP}\n";
             if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "")) {
                 print "Received Power Switch IP: $ENV{POWER_SWITCH_IP}.\n";
