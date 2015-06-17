@@ -700,7 +700,10 @@ sub execute_serial_tests
         if ($ENV{SSH_DEVICE_USER} && $ENV{SSH_DEVICE_PASSWD} && $ENV{SSH_DEVICE_IP}) {
             my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
 
-            die if (!$addr);
+            if (!$addr) {
+                print "Could not get own IP address\n";
+                die;
+            }
             if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "")) {
                 print "Rebooting device at IP '$ENV{POWER_SWITCH_IP}'\n";
                 print "+ $POWERCYCLE --rebootandwait\n";
@@ -717,7 +720,6 @@ sub execute_serial_tests
             print "Unmounting host from device\n";
             system ("$BUBAUNMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
         } else {
-            exit 1;
             while ($self->running_tests_count()) {
                 $self->wait_for_test_to_complete( );
             }
