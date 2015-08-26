@@ -1638,6 +1638,8 @@ sub _run_autotests_impl
             close $remote;
 
             last if (defined $resp and $resp ne "");
+            # this means there's something wrong with the connection and we just need to retry
+            next if (defined $resp and $resp =~ m/timed out waiting for you to send me some data!/);
             print "Did not receive device. Reattempting in 5 minutes\n";
             sleep (300);
         }
