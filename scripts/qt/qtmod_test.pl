@@ -878,27 +878,27 @@ sub replace_submodules_with_custom
     my $basedir = getcwd;
     local $CWD = catdir($basedir, "qtbase");
     $self->exe( 'git', 'remote', 'remove', 'origin' );
-    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://qt-gerrit.ci.local:29418/QtRD-15810/qtbase.git' );
+    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtbase.git' );
     $self->exe( 'git', 'remote', 'update' );
-    $self->exe( 'git', 'checkout', '-b', 'vxworks-5.5', 'origin/vxworks-5.5' );
+    $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
 
     local $CWD = catdir($basedir, "qtdeclarative");
     $self->exe( 'git', 'remote', 'remove', 'origin' );
-    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://qt-gerrit.ci.local:29418/QtRD-15810/qtdeclarative.git' );
+    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtdeclarative.git' );
     $self->exe( 'git', 'remote', 'update' );
-    $self->exe( 'git', 'checkout', '-b', 'vxworks-5.5', 'origin/vxworks-5.5' );
+    $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
 
     local $CWD = catdir($basedir, "qtmultimedia");
     $self->exe( 'git', 'remote', 'remove', 'origin' );
-    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://qt-gerrit.ci.local:29418/QtRD-15810/qtmultimedia.git' );
+    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtmultimedia.git' );
     $self->exe( 'git', 'remote', 'update' );
-    $self->exe( 'git', 'checkout', '-b', 'vxworks-5.5', 'origin/vxworks-5.5' );
+    $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
 
     local $CWD = catdir($basedir, "qtdoc");
     $self->exe( 'git', 'remote', 'remove', 'origin' );
-    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://qt-gerrit.ci.local:29418/QtRD-15810/qtdoc.git' );
+    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/tqtc-qtdoc.git' );
     $self->exe( 'git', 'remote', 'update' );
-    $self->exe( 'git', 'checkout', '-b', 'vxworks-5.5', 'origin/vxworks-5.5' );
+    $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
     print "Replacing done.\n";
 }
 
