@@ -867,7 +867,7 @@ sub switch_to_550_branch
     print "Switching to 5.5.0 branch.\n";
     my ($self) = @_;
     my $basedir = getcwd;
-    $self->exe( 'git', 'checkout', 'remotes/mirror/5.5' );
+    $self->exe( 'git', 'checkout', 'remotes/mirror/5.5.0' );
     print "Switch done.\n";
 }
 
@@ -973,8 +973,8 @@ sub run_git_checkout
         $self->do_init_repository( @needed_modules );
     }
     if ($qt_gitmodule eq 'qt5') {
-        $self->switch_to_550_branch();
-        $self->do_init_repository( @needed_modules );
+#        $self->switch_to_550_branch();
+#        $self->do_init_repository( @needed_modules );
         $self->replace_submodules_with_custom();
     }
 
