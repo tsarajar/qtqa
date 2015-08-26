@@ -896,7 +896,7 @@ sub replace_submodules_with_custom
 
     local $CWD = catdir($basedir, "qtdoc");
     $self->exe( 'git', 'remote', 'remove', 'origin' );
-    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/tqtc-qtdoc.git' );
+    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtdoc.git' );
     $self->exe( 'git', 'remote', 'update' );
     $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
     print "Replacing done.\n";
