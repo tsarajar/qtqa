@@ -697,6 +697,9 @@ sub execute_serial_tests
     return unless @tests;
 
     while (my $test = shift @tests) {
+        while ($self->running_tests_count()) {
+            $self->wait_for_test_to_complete( );
+        }
         if ($ENV{SSH_DEVICE_USER} && $ENV{SSH_DEVICE_PASSWD} && $ENV{SSH_DEVICE_IP}) {
             my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
 
@@ -714,15 +717,9 @@ sub execute_serial_tests
 
             $self->spawn_subtest( test => $test );
 
-            while ($self->running_tests_count()) {
-                $self->wait_for_test_to_complete( );
-            }
             print "Unmounting host from device\n";
             system ("$BUBAUNMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
         } else {
-            while ($self->running_tests_count()) {
-                $self->wait_for_test_to_complete( );
-            }
             $self->spawn_subtest( test => $test );
         }
     }
