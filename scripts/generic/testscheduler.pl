@@ -717,8 +717,8 @@ sub execute_serial_tests
 
             $self->spawn_subtest( test => $test );
 
-            print "Unmounting host from device\n";
-            system ("$BUBAUNMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
+#            print "Unmounting host from device\n";
+#            system ("$BUBAUNMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
         } else {
             $self->spawn_subtest( test => $test );
         }
