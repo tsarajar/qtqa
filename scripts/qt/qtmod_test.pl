@@ -882,23 +882,23 @@ sub replace_submodules_with_custom
     $self->exe( 'git', 'remote', 'update' );
     $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
 
-    local $CWD = catdir($basedir, "qtdeclarative");
-    $self->exe( 'git', 'remote', 'remove', 'origin' );
-    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtdeclarative.git' );
-    $self->exe( 'git', 'remote', 'update' );
-    $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
+#    local $CWD = catdir($basedir, "qtdeclarative");
+#    $self->exe( 'git', 'remote', 'remove', 'origin' );
+#    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtdeclarative.git' );
+#    $self->exe( 'git', 'remote', 'update' );
+#    $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
 
-    local $CWD = catdir($basedir, "qtmultimedia");
-    $self->exe( 'git', 'remote', 'remove', 'origin' );
-    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtmultimedia.git' );
-    $self->exe( 'git', 'remote', 'update' );
-    $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
+#    local $CWD = catdir($basedir, "qtmultimedia");
+#    $self->exe( 'git', 'remote', 'remove', 'origin' );
+#    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtmultimedia.git' );
+#    $self->exe( 'git', 'remote', 'update' );
+#    $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
 
-    local $CWD = catdir($basedir, "qtdoc");
-    $self->exe( 'git', 'remote', 'remove', 'origin' );
-    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtdoc.git' );
-    $self->exe( 'git', 'remote', 'update' );
-    $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
+#    local $CWD = catdir($basedir, "qtdoc");
+#    $self->exe( 'git', 'remote', 'remove', 'origin' );
+#    $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtdoc.git' );
+#    $self->exe( 'git', 'remote', 'update' );
+#    $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
     print "Replacing done.\n";
 }
 
@@ -972,7 +972,7 @@ sub run_git_checkout
     if (@needed_modules || $qt_gitmodule eq 'qt5') {
         $self->do_init_repository( @needed_modules );
     }
-    if ($qt_gitmodule eq 'qt5') {
+    if ($qt_gitmodule eq 'qt5' or $qt_gitmodule eq 'qtdeclarative') {
 #        $self->switch_to_550_branch();
 #        $self->do_init_repository( @needed_modules );
         $self->replace_submodules_with_custom();
