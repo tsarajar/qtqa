@@ -1123,7 +1123,8 @@ sub run_compile
 
     my @qmake_args;
     # do not build tools when targeting xplatform
-    my $make_tools = ($qt_configure_extra_args =~ m/-xplatform/ or $qt_configure_args =~ m/-xplatform/) ? "" : "tools ";
+    my $make_tools = ($qt_configure_extra_args =~ m/-xplatform/i or $qt_configure_args =~ m/-xplatform/i or
+                      $qt_configure_extra_args =~ m/-device/i or $qt_configure_args =~ m/-device/i) ? "" : "tools ";
     if ($qt_minimal_deps) {
         # Qt 5 only:
         # minimal deps mode?  Then we turned off some build parts in configure, and must
