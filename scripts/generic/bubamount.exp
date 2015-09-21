@@ -14,5 +14,7 @@ expect "\\->"
 sleep 2
 send "nfsMount \"CI\",\"/work\",\"/work\"\n"
 expect "\\->"
+send "nfsMount \"CI\",\"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common\",\"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common\"\n"
+expect "\\->"
 send "exit\n"
 
