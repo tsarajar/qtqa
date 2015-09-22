@@ -1677,7 +1677,12 @@ sub _run_autotests_impl
 
     print "Preparing device.\n";
     # get own ip address
-    my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
+    my $sock = IO::Socket::INET->new(PeerAddr => 'www.perl.org',
+                                        PeerPort => 'http(80)',
+                                        Proto    => 'tcp');
+
+    my $addr = $sock->sockhost;
+#    my ($addr) = inet_ntoa((gethostbyname(hostname))[4]); #doesn't work when dns isn't updated
 
     print "Mounting host to device\n";
     system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");

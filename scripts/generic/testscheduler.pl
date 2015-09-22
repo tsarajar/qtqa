@@ -143,6 +143,7 @@ use Readonly;
 use Timer::Simple;
 use Sys::Hostname;
 use Socket;
+use IO::Socket::INET;
 
 use Getopt::Long qw(
     GetOptionsFromArray
@@ -210,7 +211,13 @@ sub run
       sleep(5);
 
       # get own ip address
-      my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
+#      my ($addr) = inet_ntoa((gethostbyname(hostname))[4]); #didn't work when dns wasn't updated
+      my $sock = IO::Socket::INET->new(PeerAddr => 'www.perl.org',
+                                        PeerPort => 'http(80)',
+                                        Proto    => 'tcp');
+
+      my $addr = $sock->sockhost;
+
       # Make sure that /work exists so that it can be mounted to
       $cmd = "$adb shell mkdir /work";
       print "+ $cmd\n";
