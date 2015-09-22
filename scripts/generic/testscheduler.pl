@@ -153,7 +153,6 @@ use Getopt::Long qw(
 Readonly my $TESTRUNNER => catfile( $FindBin::Bin, 'testrunner.pl' );
 Readonly my $BUBAMOUNT => catfile( $FindBin::Bin, 'bubamount.exp' );
 Readonly my $BUBAUNMOUNT => catfile( $FindBin::Bin, 'bubaunmount.exp' );
-Readonly my $BUBA => catfile( $FindBin::Bin, 'buba.exp' );
 Readonly my $POWERCYCLE => catfile ($FindBin::Bin, 'power_cycle.pl' );
 # declarations of static functions
 sub timestr;

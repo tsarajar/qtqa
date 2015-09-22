@@ -5,6 +5,7 @@ set user [lindex $argv 0]
 set pass [lindex $argv 1]
 set host [lindex $argv 2]
 set command [lindex $argv 3]
+set path [lindex $argv4]
 
 spawn ssh -F . -oStrictHostKeyChecking=no $host -l $user
 expect -re ".*assword:.*"
@@ -16,12 +17,11 @@ send "putenv \"QT_QPA_EGLFS_PHYSICAL_HEIGHT=88\"\r"
 expect "\\->"
 send "putenv \"QT_QPA_EGLFS_FB=/dev/fb1\"\r"
 expect "\\->"
-send "putenv \"LD_LIBRARY_PATH=/work/install/lib;/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common\"\r"
+send "putenv \"LD_LIBRARY_PATH=/sd0:1/qt55rtp;/sd0:1/lib\"\r"
 expect "\\->"
-send "putenv \"QML2_IMPORT_PATH=/work/install/qml\"\r"
+send "cd \"$path\"\r"
 expect "\\->"
 send_user "\n"
-#send_user "\nSuccessfully logged in to run commands\n"
 send "rtpSp( $command, 200, 0x50000, 0, 0x01000000)\r"
 expect {
     -re ".*Totals:.* 0 failed.*\n.*Finished testing of.*" {send "exit\r"; send_user "\nNo failures detected\n";}

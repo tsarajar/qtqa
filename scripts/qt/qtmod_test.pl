@@ -57,9 +57,12 @@ use Text::Trim;
 use Cwd;
 use JSON;
 use IO::Socket;
+use Sys::Hostname;
 
 #Code coverage tools
 Readonly my $TESTCOCOON  => 'testcocoon';
+Readonly my $BUBAMOUNT => catfile( $FindBin::Bin, 'bubamount.exp' );
+Readonly my $BUBACOPY => catfile( $FindBin::Bin, 'bubacopy.exp' );
 
 Readonly my %COVERAGE_TOOLS => (
     $TESTCOCOON  =>  1,
@@ -1671,6 +1674,15 @@ sub _run_autotests_impl
             }
         }
     }
+
+    print "Preparing device.\n";
+    # get own ip address
+    my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
+
+    print "Mounting host to device\n";
+    system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
+    print "Copying binaries\n";
+    system ("$BUBACOPY $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP}");
 
     my $run = sub {
         chdir( $tests_dir );
