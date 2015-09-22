@@ -20,6 +20,7 @@ send "putenv \"LD_LIBRARY_PATH=/work/install/lib;/opt/fsl_imx6_1_1_4_3_VSB/usr/l
 expect "\\->"
 send "putenv \"QML2_IMPORT_PATH=/work/install/qml\"\r"
 expect "\\->"
+send_user "\n"
 #send_user "\nSuccessfully logged in to run commands\n"
 send "rtpSp( $command, 200, 0x50000, 0, 0x01000000)\r"
 expect {
