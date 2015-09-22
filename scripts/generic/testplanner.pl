@@ -502,8 +502,8 @@ sub plan_testcase
        push (@testcaseargs, "$ENV{SSH_DEVICE_USER}");
        push (@testcaseargs, "$ENV{SSH_DEVICE_PASSWD}");
        push (@testcaseargs, "$ENV{SSH_DEVICE_IP}");
-       push (@testcaseargs, "\"$TEST_BIN\"");
-       push (@testcaseargs, "\"$CWD\"");
+       push (@testcaseargs, "$TEST_BIN");
+       push (@testcaseargs, "$CWD");
        $testcase = $BUBA;
     }
 

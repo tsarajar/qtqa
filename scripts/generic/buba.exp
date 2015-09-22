@@ -22,7 +22,7 @@ expect "\\->"
 send "cd \"$path\"\r"
 expect "\\->"
 send_user "\n"
-send "rtpSp( $command, 200, 0x50000, 0, 0x01000000)\r"
+send "rtpSp( \"$command\", 200, 0x50000, 0, 0x01000000)\r"
 expect {
     -re ".*Totals:.* 0 failed.*\n.*Finished testing of.*" {send "exit\r"; send_user "\nNo failures detected\n";}
     -re "Cannot spawn.*" {send_user "\nSerious problem!!!\n";send "exit\r"; exit 1}
