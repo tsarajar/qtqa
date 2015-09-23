@@ -9,9 +9,12 @@ spawn ssh -F . -oStrictHostKeyChecking=no $host -l $user
 expect -re ".*assword:.*"
 send "$pass\n"
 expect "\\->"
+send_user "\n"
 send "nfsUnmount \"/work\"\n"
 expect "\\->"
+send_user "\n"
 send "hostDelete \"CI\",\"$myip\"\n"
 expect "\\->"
+send_user "\n"
 send "exit\n"
 
