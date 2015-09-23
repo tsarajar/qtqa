@@ -63,6 +63,7 @@ use Sys::Hostname;
 Readonly my $TESTCOCOON  => 'testcocoon';
 Readonly my $BUBAMOUNT => catfile( "$FindBin::Bin/../generic", 'bubamount.exp' );
 Readonly my $BUBACOPY => catfile( "$FindBin::Bin/../generic", 'bubacopy.exp' );
+Readonly my $POWERCYCLE => catfile( "$FindBin::Bin/../generic", 'power_cycle.pl' );
 
 Readonly my %COVERAGE_TOOLS => (
     $TESTCOCOON  =>  1,
@@ -1683,6 +1684,12 @@ sub _run_autotests_impl
 
     my $addr = $sock->sockhost;
 #    my ($addr) = inet_ntoa((gethostbyname(hostname))[4]); #doesn't work when dns isn't updated
+
+    if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "")) {
+        print "Rebooting device at IP '$ENV{POWER_SWITCH_IP}'\n";
+        print "+ $POWERCYCLE --rebootandwait\n";
+        system ("$POWERCYCLE --rebootandwait");
+    }
 
     print "Mounting host to device\n";
     system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
