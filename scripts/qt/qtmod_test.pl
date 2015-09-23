@@ -61,8 +61,8 @@ use Sys::Hostname;
 
 #Code coverage tools
 Readonly my $TESTCOCOON  => 'testcocoon';
-Readonly my $BUBAMOUNT => catfile( $FindBin::Bin, 'bubamount.exp' );
-Readonly my $BUBACOPY => catfile( $FindBin::Bin, 'bubacopy.exp' );
+Readonly my $BUBAMOUNT => catfile( "$FindBin::Bin/../generic", 'bubamount.exp' );
+Readonly my $BUBACOPY => catfile( "$FindBin::Bin/../generic", 'bubacopy.exp' );
 
 Readonly my %COVERAGE_TOOLS => (
     $TESTCOCOON  =>  1,
