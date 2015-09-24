@@ -1042,7 +1042,7 @@ sub run_git_checkout
     # Set various modules to the SHA1s we want.
     $self->set_module_refs( %module_to_ref );
 
-    if ($qt_gitmodule eq 'qt5' or $qt_gitmodule eq 'qtdeclarative') {
+    if ($qt_gitmodule eq 'qt5' or $qt_gitmodule eq 'qtdeclarative' or $qt_gitmodule eq 'qtmultimedia') {
 #        $self->switch_to_550_branch();
 #        $self->do_init_repository( @needed_modules );
         $self->replace_submodules_with_custom( $qt_gitmodule );
