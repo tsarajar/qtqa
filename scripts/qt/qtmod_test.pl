@@ -887,13 +887,14 @@ sub replace_submodules_with_custom
     $self->exe( 'git', 'remote', 'update' );
     $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
 
-    if ($submodule eq "qt5") {
+    if (($submodule eq "qt5") or ($submodule eq "qtmultimedia")){
         local $CWD = catdir($basedir, "qtdeclarative");
         $self->exe( 'git', 'remote', 'remove', 'origin' );
         $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtdeclarative.git' );
         $self->exe( 'git', 'remote', 'update' );
         $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
-
+    }
+    if ($submodule eq "qt5") {
         local $CWD = catdir($basedir, "qtmultimedia");
         $self->exe( 'git', 'remote', 'remove', 'origin' );
         $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtmultimedia.git' );
