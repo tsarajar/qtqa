@@ -228,6 +228,8 @@ my @PROPERTIES = (
     q{qt.patch.second}         => q{patch 2},
     q{qt.patch.module}         => q{mdule to be patched},
 
+    q{replace.vxworks.sources} => q{replace vxworks sources},
+
 
     q{make-check.args}         => q{extra arguments passed to `make check' command when running }
                                 . q{tests (e.g. `-j2'); defaults to the value of make.args with }
@@ -575,6 +577,8 @@ sub read_and_store_configuration
         'qt.patch.first'          => q{}                                         ,
         'qt.patch.second'         => q{}                                         ,
         'qt.patch.module'         => q{}                                         ,
+
+        'replace.vxworks.sources' => 0                                           ,
     );
 
     # for convenience only - this should not be overridden
@@ -928,6 +932,7 @@ sub run_git_checkout
     my $qt_revdep_revdep_ref = $self->{ 'qt.revdep.revdep_ref' };
     my $location      = $self->{ 'location'      };
     my $qt_sync_profile_dir = $self->{ 'qt.sync.profile.dir' };
+    my $replace_vxworks_sources = $self->{ 'replace.vxworks.sources' };
 
 
     # We don't need to clone submodules for qt/qt.git
@@ -1042,7 +1047,7 @@ sub run_git_checkout
     # Set various modules to the SHA1s we want.
     $self->set_module_refs( %module_to_ref );
 
-    if ($qt_gitmodule eq 'qt5' or $qt_gitmodule eq 'qtdeclarative' or $qt_gitmodule eq 'qtmultimedia') {
+    if ($replace_vxworks_sources) {
 #        $self->switch_to_550_branch();
 #        $self->do_init_repository( @needed_modules );
         $self->replace_submodules_with_custom( $qt_gitmodule );
@@ -1553,6 +1558,8 @@ sub _run_autotests_impl
     my $do_compile           = $args{ do_compile };
     my $insignificant        = $self->{ $insignificant_option };
 
+    my $replace_vxworks_sources = $self->{ 'replace.vxworks.sources' };
+
     # mobile targets
     if ($mobile_test_enabled) {
         # sanity check
@@ -1686,16 +1693,18 @@ sub _run_autotests_impl
     my $addr = $sock->sockhost;
 #    my ($addr) = inet_ntoa((gethostbyname(hostname))[4]); #doesn't work when dns isn't updated
 
-    if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "")) {
-        print "Rebooting device at IP '$ENV{POWER_SWITCH_IP}'\n";
-        print "+ $POWERCYCLE --rebootandwait\n";
-        system ("$POWERCYCLE --rebootandwait");
-    }
+    if ($replace_vxworks_sources) {
+        if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "")) {
+            print "Rebooting device at IP '$ENV{POWER_SWITCH_IP}'\n";
+            print "+ $POWERCYCLE --rebootandwait\n";
+            system ("$POWERCYCLE --rebootandwait");
+        }
 
-    print "Mounting host to device\n";
-    system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
-    print "Copying binaries\n";
-    system ("$BUBACOPY $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP}");
+        print "Mounting host to device\n";
+        system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
+        print "Copying binaries\n";
+        system ("$BUBACOPY $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP}");
+    }
 
     my $run = sub {
         chdir( $tests_dir );
