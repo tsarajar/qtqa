@@ -23,9 +23,10 @@ send "cd \"$path\"\r"
 expect "\\->"
 send "rtpSp( \"$command\", 200, 0x50000, 0, 0x01000000)\r"
 expect {
-    -re ".*Totals:.* 0 failed.*\n.*Finished testing of.*" {send "exit\r"; send_user "\nNo failures detected\n";}
+    -re ".*Totals:.* 0 failed.*\n.*Finished testing of.*" {send "exit\r"; send_user "\nNo failures detected\n"; exit 0;}
     -re "Cannot spawn.*" {send_user "\nSerious problem!!!\n";send "exit\r"; exit 1}
     -re ".*Totals:.* \[1-9]\[0-9]* failed.*\n.*" {send "exit\r"; send_user "\nFailures detected\n";exit 1}
     eof {send_user "Timeout!!!\n" exit 1}
     timeout { send_user "\nTimeout!!!!\n"; exit 1}
 }
+exit 0;
