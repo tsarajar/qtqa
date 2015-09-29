@@ -55,7 +55,6 @@ expect {
     "Unhandled C++ exception resulted in call to terminate" { send_user "\nUnhandled C++ exception. Autotest failed.\n"; exit 1; }
     "QEventDispatcherUNIXPrivate\(\): Can not continue without a thread pipe" { send_user "\nNo thread pipe. Autotest failed.\n"; exit 1; }
     "Exiting" { send_user "\nExiting. Autotest failed.\n"; exit 1; }
-    "Failed to start server (can not bind server to port ${port})." { send_user "\nFailed to start server. Autotest failed.\n"; exit 1; }
     "fatal kernel task-level exception!" { send_user "\nFatal kernel task-level exception. Autotest failed.\n"; exit 1; }
     "C interp: unknown symbol name 'main'." { send_user "\nUnknown symbol name. Autotest failed.\n"; exit 1; }
     "module contains undefined symbol(s) and may be unusable." { send_user "\nUndefined symbols in binary, Autotest failed.\n"; exit 1; }
