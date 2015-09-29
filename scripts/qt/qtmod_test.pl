@@ -885,13 +885,15 @@ sub replace_submodules_with_custom
     my ($self, $submodule) = @_;
   
     my $basedir = getcwd;
+    #replace QtBase
     local $CWD = catdir($basedir, "qtbase");
     $self->exe( 'git', 'remote', 'remove', 'origin' );
     $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtbase.git' );
     $self->exe( 'git', 'remote', 'update' );
     $self->exe( 'git', 'checkout', '-b', 'tqtc/vxworks-5.5', 'origin/tqtc/vxworks-5.5' );
 
-    if (($submodule eq "qt5") or ($submodule eq "qtmultimedia")){
+    #replace QtDeclarative
+    if (($submodule ne "qtbase") and ($submodule ne "qtdeclarative") and ($submodule ne "qtxmlpatterns")){
         local $CWD = catdir($basedir, "qtdeclarative");
         $self->exe( 'git', 'remote', 'remove', 'origin' );
         $self->exe( 'git', 'remote', 'add', 'origin', 'ssh://codereview.qt-project.org:29418/qt/tqtc-qtdeclarative.git' );
