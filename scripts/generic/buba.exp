@@ -47,10 +47,25 @@ expect "\\->"
 send_user "Timeout set to $timeout\n->"
 send "rtpSp( \"$command\", 200, 0x50000, 0, 0x01000000)\r"
 expect {
-    -re ".*Totals:.* 0 failed.*\n.*Finished testing of.*" {send "exit\r"; send_user "\nNo failures detected\n"; exit 0;}
-    -re "Cannot spawn.*" {send_user "\nSerious problem!!!\n";send "exit\r"; exit 1}
-    -re ".*Totals:.* \[1-9]\[0-9]* failed.*\n.*" {send "exit\r"; send_user "\nFailures detected\n";exit 1}
-    eof {send_user "Timeout!!!\n" exit 1}
-    timeout { send_user "\nTimeout!!!!\n"; exit 1}
+    -re "(.*) Finished testing of (.*)\n" { send_user "\nAutotest Finished.\n"; exit 0;}
+    "</TestCase>" { send_user "\nAutotest Finished.\n"; exit 0;}
+    -re "C interp: unable to open '(.*)'." { send_user "\nMissing autotest executable. Autotest failed.\n"; exit 1; }
+    -re "RTP (.*) has had a failure and has been deleted." { send_user "\nRTP has had a failure and has been deleted. Autotest failed.\n" exit 1; }
+    -re "RTP (.*) has been deleted due to signal (.*)" { send_user "\nRTP has been deleted due to signal $expect_out(2,string). Autotest failed.\n"; exit 1; }
+    "Unhandled C++ exception resulted in call to terminate" { send_user "\nUnhandled C++ exception. Autotest failed.\n"; exit 1; }
+    "QEventDispatcherUNIXPrivate\(\): Can not continue without a thread pipe" { send_user "\nNo thread pipe. Autotest failed.\n"; exit 1; }
+    "Exiting" { send_user "\nExiting. Autotest failed.\n"; exit 1; }
+    "Failed to start server (can not bind server to port ${port})." { send_user "\nFailed to start server. Autotest failed.\n"; exit 1; }
+    "fatal kernel task-level exception!" { send_user "\nFatal kernel task-level exception. Autotest failed.\n"; exit 1; }
+    "C interp: unknown symbol name 'main'." { send_user "\nUnknown symbol name. Autotest failed.\n"; exit 1; }
+    "module contains undefined symbol(s) and may be unusable." { send_user "\nUndefined symbols in binary, Autotest failed.\n"; exit 1; }
+    "Undefined symbols in binary, Autotest failed." { send_user "\nUndefined symbols in binary, Autotest failed.\n"; exit 1; }
+    "Cannot create Qt for Embedded Linux data directory:" { send_user "\nMissing qtembedded-0 directory, Autotest failed.\n"; exit 1; }
+    "QFontDatabase: Cannot find font directory" { send_user "\nMissing fonts, Autotest failed.\n"; exit 1; }
+    "C interp: unknown symbol name 'main'." { send_user "\nMissing main-function, Autotest failed.\n"; exit 1; }
+    "errno = 0x2 : S_errno_ENOENT." { send_user "\nNo such file or directory, Autotest failed.\n"; exit 1; }
+    "Cannot spawn a RTP with executable file" { send_user "\nCannot spawn RTP executable, Autotest failed.\n"; exit 1; }
+
+    timeout { send_user "\nTimeout, Autotest failed.\n"; exit 1; }
 }
 exit 0;
