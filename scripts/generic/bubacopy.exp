@@ -21,6 +21,10 @@ send_user "Expect: Reading output\n"
         send_user "Expect: Connection closed by remote host\n"
         exit 1
     }
+    timeout {
+        send_user "Time'd out\n"
+        exit 1
+    }
   }
   send_user "Expect: Exiting just for the fun of it\n"
   exit 1;
