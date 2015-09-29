@@ -7,6 +7,27 @@ set pass [lindex $argv 1]
 set host [lindex $argv 2]
 set command [lindex $argv 3]
 
+proc handle_copy_output {} {
+send_user "Expect: Reading output\n"
+  expect {
+    "value = 0 = 0x0" {
+        send_user "\nExpect: Got value 0 = 0x0\n"
+        return 0
+    }
+    -re "Broken pipe" {
+        send_user "Expect: Broken pipe\n"
+        exit 1
+    }
+    -re "closed by remote host." {
+        send_user "Expect: Connection closed by remote host\n"
+        exit 1
+    }
+  }
+  send_user "Expect: Exiting just for the fun of it\n"
+  exit 1;
+}
+
+
 spawn ssh -F . -oStrictHostKeyChecking=no $host -l $user
 expect -re ".*assword:.*"
 send "$pass\n"
@@ -34,23 +55,22 @@ expect "\\->"
 send "cd \"/sd0:1\"\n"
 expect "\\->"
 send "xcopy \"/work/install/plugins\", \"/sd0:1/qt55rtp/plugins\"\n"
-expect "value ="
+handle_copy_output
 send "xcopy \"/work/install/qml\", \"/sd0:1/qt55rtp/qml\"\n"
-expect "value ="
+handle_copy_output
 send "xcopy \"/work/install/lib/libQt5*so.5\", \"/sd0:1/qt55rtp/lib\"\n"
-expect "value ="
+handle_copy_output
 send "xcopy \"/work/install/lib/fonts\", \"/sd0:1/qt55rtp/lib/fonts\"\n"
-expect "value ="
+handle_copy_output
 send "copy \"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common/libgfxFslVivEGL.so\", \"/sd0:1/lib/libgfxFslVivEGL.so.1\"\n"
-expect "value ="
+handle_copy_output
 send "copy \"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common/libgfxFslVivGAL.so\", \"/sd0:1/lib/libgfxFslVivGAL.so.1\"\n"
-expect "value ="
+handle_copy_output
 send "copy \"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common/libgfxFslVivGLESv2.so\", \"/sd0:1/lib/libgfxFslVivGLESv2.so.1\"\n"
-expect "value ="
+handle_copy_output
 send "copy \"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common/libgfxFslVivGLSLC.so\", \"/sd0:1/lib/libgfxFslVivGLSLC.so.1\"\n"
-expect "value ="
+handle_copy_output
 send "copy \"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common/libc.so\", \"/sd0:1/lib/libc.so.1\"\n"
-expect "value ="
-send_user "\n"
-send_user "Copying done.\n"
+handle_copy_output
+send_user "\nCopying done.\n"
 exit 0
