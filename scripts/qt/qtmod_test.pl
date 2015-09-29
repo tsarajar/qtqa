@@ -1704,6 +1704,19 @@ sub _run_autotests_impl
         system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
         print "Copying binaries\n";
         system ("$BUBACOPY $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP}");
+        if ($? == -1) {
+            print "failed to execute: $!\n";
+            exit $?;
+        }
+        elsif ($? & 127) {
+            printf "child died with signal %d, %s coredump\n",
+                ($? & 127),  ($? & 128) ? 'with' : 'without';
+            exit $?;
+        }
+        else {
+            printf "child exited with value %d\n", $? >> 8;
+            exit $?;
+        } 
     }
 
     my $run = sub {
