@@ -1,11 +1,34 @@
 #!/usr/bin/expect
 
-set timeout 300
+set timeout 500
 set user [lindex $argv 0]
 set pass [lindex $argv 1]
 set host [lindex $argv 2]
 set command [lindex $argv 3]
 set path [lindex $argv 4]
+
+if {$command == "/work/build/qt/qtdeclarative/tests/auto/qml/parserstress/tst_parserstress"} {
+send_user "Setting timeout to 3600\n";
+set timeout 3600
+} elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/qmltest/tst_qmltest"} {
+send_user "Setting timeout to 3600\n"
+set timeout 3600
+} elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/qml/qqmlcomponent/tst_qqmlcomponent"} {
+send_user "Setting timeout to 3600\n"
+set timeout 3600
+} elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/qml/qqmlecmascript/tst_qqmlecmascript"} {
+send_user "Setting timeout to 3600\n"
+set timeout 3600
+} elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/qml/qqmlsettings/tst_qqmlsettings"} {
+send_user "Setting timeout to 3600\n"
+set timeout 3600
+} elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/qml/qqmlsettings/tst_qqmlsettings"} {
+send_user "Setting timeout to 3600\n"
+set timeout 3600
+} else {
+send_user "Setting timeout to 500\n";
+set timeout 500
+}
 
 spawn ssh -F . -oStrictHostKeyChecking=no $host -l $user
 expect -re ".*assword:.*"
@@ -21,6 +44,7 @@ send "putenv \"LD_LIBRARY_PATH=/sd0:1/qt55rtp/lib;/sd0:1/lib\"\r"
 expect "\\->"
 send "cd \"$path\"\r"
 expect "\\->"
+send_user "Timeout set to $timeout\n->"
 send "rtpSp( \"$command\", 200, 0x50000, 0, 0x01000000)\r"
 expect {
     -re ".*Totals:.* 0 failed.*\n.*Finished testing of.*" {send "exit\r"; send_user "\nNo failures detected\n"; exit 0;}
