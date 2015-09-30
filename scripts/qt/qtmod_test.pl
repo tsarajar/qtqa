@@ -1716,8 +1716,7 @@ sub _run_autotests_impl
             exit $?;
         }
         else {
-            printf "child exited with value %d\n", $? >> 8;
-            exit $?;
+            printf "child copying binaries exited with value %d\n", $? >> 8;
         } 
     }
 
