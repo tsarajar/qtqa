@@ -1533,66 +1533,8 @@ sub run_qtqa_autotests
     return;
 }
 
-sub _run_autotests_impl
+sub request_device
 {
-    my ($self, %args) = @_;
-
-    # global settings
-    my $qt_build_dir   = $self->{ 'qt.build.dir' };
-    my $qt_install_dir = $self->{ 'qt.install.dir' };
-    my $qt_make_install = $self->{ 'qt.make_install' };
-    my $make_bin       = $self->{ 'make.bin' };
-    my $make_args      = $self->{ 'make.args' };
-    my $make_check_bin = $self->{ 'make-check.bin' };
-    my $make_check_args = $self->{ 'make-check.args' };
-    my $qt_tests_args  = $self->{ 'qt.tests.args' };
-    my $qt_tests_testscheduler = $self->{ 'qt.tests.testscheduler' };
-    my $qt_tests_testscheduler_args = $self->{ 'qt.tests.testscheduler.args' };
-
-    my $mobile_test_enabled  = $self->{ 'qt.mobile.test.enabled' };
-    my $mobile_testrunner    = $self->{ 'qt.mobile.testrunner' };
-    my $qt_testargs          = $self->{ 'qt.mobile.testrunner.args' };
-    my @mobile_testargs = split(/ /, $qt_testargs);
-
-    # settings for this autotest run
-    my $tests_dir            = $args{ tests_dir };
-    my $insignificant_option = $args{ insignificant_option };
-    my $do_compile           = $args{ do_compile };
-    my $insignificant        = $self->{ $insignificant_option };
-
-    my $replace_vxworks_sources = $self->{ 'replace.vxworks.sources' };
-
-    # mobile targets
-    if ($mobile_test_enabled) {
-        # sanity check
-        $self->fatal_error( "internal error: $mobile_testrunner does not exist" ) if (! -e $mobile_testrunner);
-        # disable building and desktop scheduler
-        $do_compile = 0;
-        $qt_tests_testscheduler = 0;
-    }
-    # Add tools from all the modules to PATH.
-    # If shadow-build with install enabled, then we need to add install path
-    # rather than build path into the PATH.
-    local $ENV{ PATH } = $ENV{ PATH };
-    local $ENV{ QMAKEPATH } = $ENV{ QMAKEPATH };
-    if ($self->{ installed }) {
-        # shadow build and installing? need to add install dir into PATH
-        Env::Path->PATH->Prepend( canonpath catfile( $qt_install_dir, 'bin' ) );
-    }
-    elsif ($self->{ 'qt.gitmodule' } eq 'qt') {
-        # qt4 case. this is needed to use the right qmake to compile the tests
-        Env::Path->PATH->Prepend( canonpath catfile( $qt_build_dir, 'bin' ) );
-    }
-    else {
-        Env::Path->PATH->Prepend( canonpath catfile( $qt_build_dir, 'qtbase', 'bin' ) );
-
-        # If we are expected to install, but we're not installed yet, then
-        # make sure qmake can find its mkspecs.
-        if ($qt_make_install) {
-            Env::Path->QMAKEPATH->Prepend( canonpath catfile( $qt_build_dir, 'qtbase' ) );
-        }
-    }
-
     my $resp;
     if ( $ENV{ADB_DEVICE} && $ENV{ADB_DEVICE_SW_VERSION}) {
         while (1) {
@@ -1685,39 +1627,158 @@ sub _run_autotests_impl
             }
         }
     }
+return;
+}
 
+sub prepare_device
+{
     print "Preparing device.\n";
     # get own ip address
     my $sock = IO::Socket::INET->new(PeerAddr => 'www.perl.org',
-                                        PeerPort => 'http(80)',
-                                        Proto    => 'tcp');
-
+                                    PeerPort => 'http(80)',
+                                    Proto    => 'tcp');
     my $addr = $sock->sockhost;
-#    my ($addr) = inet_ntoa((gethostbyname(hostname))[4]); #doesn't work when dns isn't updated
 
+   if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "")) {
+        print "Rebooting device at IP '$ENV{POWER_SWITCH_IP}'\n";
+        print "+ $POWERCYCLE --rebootandwait\n";
+        system ("$POWERCYCLE --rebootandwait");
+    }
+
+    print "Mounting host to device\n";
+    system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
+    print "Copying binaries\n";
+    system ("$BUBACOPY $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP}");
+    if ($? == -1) {
+        print "failed to execute: $!\n";
+        release_device();
+        exit $?;
+    }
+    elsif ($? & 127) {
+        printf "child died with signal %d, %s coredump\n",
+            ($? & 127),  ($? & 128) ? 'with' : 'without';
+        release_device();
+        exit $?;
+    }
+    else {
+        printf "child copying binaries exited with value %d\n", $? >> 8;
+    }
+    # There was a problem
+    if ($?) {
+        release_device();
+        return;
+    }
+
+}
+
+sub release_device
+{
+    my $resp;
+    if (defined $ENV{ADB_DEVICE_IP}) {
+            print "Releasing '$ENV{ADB_DEVICE_IP}' from usage at qt-ci-dev.ci.local:7399.\n";
+            my $string = qq({"type":"device-release","ip":"$ENV{ADB_DEVICE_IP}"});
+            print "JSON: $string\n";
+            my $json = JSON->new->allow_nonref;
+            my $json_text = $json->encode($string);
+            my $remote = IO::Socket::INET->new( Proto     => "tcp",
+                                             PeerAddr  => "qt-ci-dev.ci.local",
+                                             PeerPort  => 7399,
+                                            );
+            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
+            $remote->autoflush(1);
+            print $remote "$string";
+            while ( <$remote> ) { $resp .= $_; }
+            close $remote;
+
+        chomp($resp);
+        print "qt-ci-dev.ci.local returned $resp\n";
+    }
+
+    if (defined $ENV{SSH_DEVICE_IP}) {
+            print "Releasing '$ENV{SSH_DEVICE_IP}' from usage at qt-ci-dev.ci.local:7399.\n";
+            my $string = qq({"type":"device-release","ip":"$ENV{SSH_DEVICE_IP}"});
+            print "JSON: $string\n";
+            my $json = JSON->new->allow_nonref;
+            my $json_text = $json->encode($string);
+            my $remote = IO::Socket::INET->new( Proto     => "tcp",
+                                             PeerAddr  => "qt-ci-dev.ci.local",
+                                             PeerPort  => 7399,
+                                            );
+            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
+            $remote->autoflush(1);
+            print $remote "$string";
+            while ( <$remote> ) { $resp .= $_; }
+            close $remote;
+
+        chomp($resp);
+        print "qt-ci-dev.ci.local returned $resp\n";
+    }
+}
+
+
+sub _run_autotests_impl
+{
+    my ($self, %args) = @_;
+
+    # global settings
+    my $qt_build_dir   = $self->{ 'qt.build.dir' };
+    my $qt_install_dir = $self->{ 'qt.install.dir' };
+    my $qt_make_install = $self->{ 'qt.make_install' };
+    my $make_bin       = $self->{ 'make.bin' };
+    my $make_args      = $self->{ 'make.args' };
+    my $make_check_bin = $self->{ 'make-check.bin' };
+    my $make_check_args = $self->{ 'make-check.args' };
+    my $qt_tests_args  = $self->{ 'qt.tests.args' };
+    my $qt_tests_testscheduler = $self->{ 'qt.tests.testscheduler' };
+    my $qt_tests_testscheduler_args = $self->{ 'qt.tests.testscheduler.args' };
+
+    my $mobile_test_enabled  = $self->{ 'qt.mobile.test.enabled' };
+    my $mobile_testrunner    = $self->{ 'qt.mobile.testrunner' };
+    my $qt_testargs          = $self->{ 'qt.mobile.testrunner.args' };
+    my @mobile_testargs = split(/ /, $qt_testargs);
+
+    # settings for this autotest run
+    my $tests_dir            = $args{ tests_dir };
+    my $insignificant_option = $args{ insignificant_option };
+    my $do_compile           = $args{ do_compile };
+    my $insignificant        = $self->{ $insignificant_option };
+
+    my $replace_vxworks_sources = $self->{ 'replace.vxworks.sources' };
+
+    # mobile targets
+    if ($mobile_test_enabled) {
+        # sanity check
+        $self->fatal_error( "internal error: $mobile_testrunner does not exist" ) if (! -e $mobile_testrunner);
+        # disable building and desktop scheduler
+        $do_compile = 0;
+        $qt_tests_testscheduler = 0;
+    }
+    # Add tools from all the modules to PATH.
+    # If shadow-build with install enabled, then we need to add install path
+    # rather than build path into the PATH.
+    local $ENV{ PATH } = $ENV{ PATH };
+    local $ENV{ QMAKEPATH } = $ENV{ QMAKEPATH };
+    if ($self->{ installed }) {
+        # shadow build and installing? need to add install dir into PATH
+        Env::Path->PATH->Prepend( canonpath catfile( $qt_install_dir, 'bin' ) );
+    }
+    elsif ($self->{ 'qt.gitmodule' } eq 'qt') {
+        # qt4 case. this is needed to use the right qmake to compile the tests
+        Env::Path->PATH->Prepend( canonpath catfile( $qt_build_dir, 'bin' ) );
+    }
+    else {
+        Env::Path->PATH->Prepend( canonpath catfile( $qt_build_dir, 'qtbase', 'bin' ) );
+
+        # If we are expected to install, but we're not installed yet, then
+        # make sure qmake can find its mkspecs.
+        if ($qt_make_install) {
+            Env::Path->QMAKEPATH->Prepend( canonpath catfile( $qt_build_dir, 'qtbase' ) );
+        }
+    }
+
+    request_device();
     if ($replace_vxworks_sources) {
-        if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "")) {
-            print "Rebooting device at IP '$ENV{POWER_SWITCH_IP}'\n";
-            print "+ $POWERCYCLE --rebootandwait\n";
-            system ("$POWERCYCLE --rebootandwait");
-        }
-
-        print "Mounting host to device\n";
-        system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
-        print "Copying binaries\n";
-        system ("$BUBACOPY $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP}");
-        if ($? == -1) {
-            print "failed to execute: $!\n";
-            exit $?;
-        }
-        elsif ($? & 127) {
-            printf "child died with signal %d, %s coredump\n",
-                ($? & 127),  ($? & 128) ? 'with' : 'without';
-            exit $?;
-        }
-        else {
-            printf "child copying binaries exited with value %d\n", $? >> 8;
-        } 
+       prepare_device();
     }
 
     my $run = sub {
@@ -1789,46 +1850,7 @@ sub _run_autotests_impl
     else {
         $run->();
     }
-
-    if (defined $ENV{ADB_DEVICE_IP}) {
-            print "Releasing '$ENV{ADB_DEVICE_IP}' from usage at qt-ci-dev.ci.local:7399.\n";
-            my $string = qq({"type":"device-release","ip":"$ENV{ADB_DEVICE_IP}"});
-            print "JSON: $string\n";
-            my $json = JSON->new->allow_nonref;
-            my $json_text = $json->encode($string);
-            my $remote = IO::Socket::INET->new( Proto     => "tcp",
-                                             PeerAddr  => "qt-ci-dev.ci.local",
-                                             PeerPort  => 7399,
-                                            );
-            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
-            $remote->autoflush(1);
-            print $remote "$string";
-            while ( <$remote> ) { $resp .= $_; }
-            close $remote;
-
-        chomp($resp);
-        print "qt-ci-dev.ci.local returned $resp\n";
-    }
-
-    if (defined $ENV{SSH_DEVICE_IP}) {
-            print "Releasing '$ENV{SSH_DEVICE_IP}' from usage at qt-ci-dev.ci.local:7399.\n";
-            my $string = qq({"type":"device-release","ip":"$ENV{SSH_DEVICE_IP}"});
-            print "JSON: $string\n";
-            my $json = JSON->new->allow_nonref;
-            my $json_text = $json->encode($string);
-            my $remote = IO::Socket::INET->new( Proto     => "tcp",
-                                             PeerAddr  => "qt-ci-dev.ci.local",
-                                             PeerPort  => 7399,
-                                            );
-            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
-            $remote->autoflush(1);
-            print $remote "$string";
-            while ( <$remote> ) { $resp .= $_; }
-            close $remote;
-
-        chomp($resp);
-        print "qt-ci-dev.ci.local returned $resp\n";
-    }
+    release_device();
     return;
 }
 
