@@ -1684,7 +1684,7 @@ sub release_device
                                              PeerAddr  => "qt-ci-dev.ci.local",
                                              PeerPort  => 7399,
                                             );
-            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
+            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Releasing of device not done." }
             $remote->autoflush(1);
             print $remote "$string";
             while ( <$remote> ) { $resp .= $_; }
