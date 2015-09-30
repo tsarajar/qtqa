@@ -21,6 +21,10 @@ send_user "Expect: Reading output\n"
         send_user "Expect: Connection closed by remote host\n"
         exit 1
     }
+    -re "Can't open input file (.*)" {
+        send_user "Expect: Can't open input file $expect_out(1,string)\n"
+        exit 1
+    }
     timeout {
         send_user "Time'd out\n"
         exit 1
