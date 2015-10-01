@@ -230,7 +230,11 @@ sub run
 
     if ( $ENV{SSH_DEVICE_IP} && $ENV{SSH_BIN_DIR} && $ENV{SSHPASS_BIN_DIR} ) {
       # get own ip address
-      my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
+#      my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
+      my $sock = IO::Socket::INET->new(PeerAddr => 'www.perl.org',
+                                    PeerPort => 'http(80)',
+                                    Proto    => 'tcp');
+      my $addr = $sock->sockhost;
 
 #      # Make sure that /work exists so that it can be mounted to
 #      my $cmd = "$SSHPASS_BIN -p '$ENV{SSH_DEVICE_PASSWD}' $SSH_BIN $ENV{SSH_DEVICE_USER}\@$ENV{SSH_DEVICE_IP} \"mkdir /work\"";
@@ -707,12 +711,11 @@ sub execute_serial_tests
             $self->wait_for_test_to_complete( );
         }
         if ($ENV{SSH_DEVICE_USER} && $ENV{SSH_DEVICE_PASSWD} && $ENV{SSH_DEVICE_IP}) {
-            my ($addr) = inet_ntoa((gethostbyname(hostname))[4]);
+            my $sock = IO::Socket::INET->new(PeerAddr => 'www.perl.org',
+                                    PeerPort => 'http(80)',
+                                    Proto    => 'tcp');
+            my $addr = $sock->sockhost;
 
-            if (!$addr) {
-                print "Could not get own IP address\n";
-                die;
-            }
             if (defined $ENV{POWER_SWITCH_IP} and ($ENV{POWER_SWITCH_IP} ne "")) {
                 print "Rebooting device at IP '$ENV{POWER_SWITCH_IP}'\n";
                 print "+ $POWERCYCLE --rebootandwait\n";
