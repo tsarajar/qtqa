@@ -6,6 +6,11 @@ set pass [lindex $argv 1]
 set host [lindex $argv 2]
 set command [lindex $argv 3]
 set path [lindex $argv 4]
+set arg1  [lindex $argv 5]
+set arg2  [lindex $argv 6]
+set arg3  [lindex $argv 7]
+set arg4  [lindex $argv 8]
+set arg5  [lindex $argv 9]
 
 if {$command == "/work/build/qt/qtdeclarative/tests/auto/qml/parserstress/tst_parserstress"} {
 send_user "Setting timeout to 3600\n";
@@ -45,7 +50,7 @@ expect "\\->"
 send "cd \"$path\"\r"
 expect "\\->"
 send_user "Timeout set to $timeout\n->"
-send "rtpSp( \"$command\", 200, 0x50000, 0, 0x01000000)\r"
+send "rtpSp( \"$command $arg1 $arg2 $arg3 $arg4 $arg5\", 200, 0x50000, 0, 0x01000000)\r"
 expect {
     -re "(.*) Finished testing of (.*)\n" { send_user "\nAutotest Finished.\n"; exit 0;}
     "</TestCase>" { send_user "\nAutotest Finished.\n"; exit 0;}
