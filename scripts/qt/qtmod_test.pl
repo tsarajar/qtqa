@@ -64,6 +64,8 @@ Readonly my $TESTCOCOON  => 'testcocoon';
 Readonly my $BUBAMOUNT => catfile( "$FindBin::Bin/../generic", 'bubamount.exp' );
 Readonly my $BUBACOPY => catfile( "$FindBin::Bin/../generic", 'bubacopy.exp' );
 Readonly my $POWERCYCLE => catfile( "$FindBin::Bin/../generic", 'power_cycle.pl' );
+Readonly my $DEVICE_POOL_PORT = 7398;
+Readonly my $DEVICE_POOL_ADDR = "qt-ci-dev.ci.local";
 
 Readonly my %COVERAGE_TOOLS => (
     $TESTCOCOON  =>  1,
@@ -1538,16 +1540,16 @@ sub request_device
     my $resp;
     if ( $ENV{ADB_DEVICE} && $ENV{ADB_DEVICE_SW_VERSION}) {
         while (1) {
-            print "Querying qt-ci-dev.ci.local:7398 for device\n";
+            print "Querying $DEVICE_POOL_ADDR:$DEVICE_POOL_PORT for device\n";
             my $string = qq({"type":"device-request","name":"$ENV{ADB_DEVICE}","version":"$ENV{ADB_DEVICE_SW_VERSION}"});
             print "JSON: $string\n";
             my $json = JSON->new->allow_nonref;
             my $json_text = $json->encode($string);
             my $remote = IO::Socket::INET->new( Proto     => "tcp",
-                                             PeerAddr  => "qt-ci-dev.ci.local",
-                                             PeerPort  => 7398,
+                                             PeerAddr  => $DEVICE_POOL_ADDR,
+                                             PeerPort  => $DEVICE_POOL_PORT,
                                             );
-            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
+            unless ($remote) { die "Cannot connect to http daemon on $DEVICE_POOL_ADDR:$DEVICE_POOL_PORT. Can't request for device." }
             $remote->autoflush(1);
             print $remote "$string";
             while ( <$remote> ) { $resp .= $_; }
@@ -1583,16 +1585,16 @@ sub request_device
 
     if ( $ENV{SSH_DEVICE} && $ENV{SSH_DEVICE_SW_VERSION}) {
         while (1) {
-            print "Querying qt-ci-dev.ci.local:7398 for device\n";
+            print "Querying $DEVICE_POOL_ADDR:$DEVICE_POOL_PORT for device\n";
             my $string = qq({"type":"device-request","name":"$ENV{SSH_DEVICE}","version":"$ENV{SSH_DEVICE_SW_VERSION}"});
             print "JSON: $string\n";
             my $json = JSON->new->allow_nonref;
             my $json_text = $json->encode($string);
             my $remote = IO::Socket::INET->new( Proto     => "tcp",
-                                             PeerAddr  => "qt-ci-dev.ci.local",
-                                             PeerPort  => 7398,
+                                             PeerAddr  => $DEVICE_POOL_ADDR,
+                                             PeerPort  => $DEVICE_POOL_PORT,
                                             );
-            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
+            unless ($remote) { die "Cannot connect to http daemon on $DEVICE_POOL_ADDR:$DEVICE_POOL_PORT. Can't request for device." }
             $remote->autoflush(1);
             print $remote "$string";
             while ( <$remote> ) { $resp .= $_; }
@@ -1675,16 +1677,16 @@ sub release_device
 {
     my $resp;
     if (defined $ENV{ADB_DEVICE_IP}) {
-            print "Releasing '$ENV{ADB_DEVICE_IP}' from usage at qt-ci-dev.ci.local:7399.\n";
+            print "Releasing '$ENV{ADB_DEVICE_IP}' from usage at $DEVICE_POOL_ADDR:$DEVICE_POOL_PORT.\n";
             my $string = qq({"type":"device-release","ip":"$ENV{ADB_DEVICE_IP}"});
             print "JSON: $string\n";
             my $json = JSON->new->allow_nonref;
             my $json_text = $json->encode($string);
             my $remote = IO::Socket::INET->new( Proto     => "tcp",
-                                             PeerAddr  => "qt-ci-dev.ci.local",
-                                             PeerPort  => 7399,
+                                             PeerAddr  => $DEVICE_POOL_ADDR,
+                                             PeerPort  => $DEVICE_POOL_PORT,
                                             );
-            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Releasing of device not done." }
+            unless ($remote) { die "Cannot connect to http daemon on $DEVICE_POOL_ADDR:$DEVICE_POOL_PORT. Releasing of device not done." }
             $remote->autoflush(1);
             print $remote "$string";
             while ( <$remote> ) { $resp .= $_; }
@@ -1695,16 +1697,16 @@ sub release_device
     }
 
     if (defined $ENV{SSH_DEVICE_IP}) {
-            print "Releasing '$ENV{SSH_DEVICE_IP}' from usage at qt-ci-dev.ci.local:7399.\n";
+            print "Releasing '$ENV{SSH_DEVICE_IP}' from usage at $DEVICE_POOL_ADDR:$DEVICE_POOL_PORT.\n";
             my $string = qq({"type":"device-release","ip":"$ENV{SSH_DEVICE_IP}"});
             print "JSON: $string\n";
             my $json = JSON->new->allow_nonref;
             my $json_text = $json->encode($string);
             my $remote = IO::Socket::INET->new( Proto     => "tcp",
-                                             PeerAddr  => "qt-ci-dev.ci.local",
-                                             PeerPort  => 7399,
+                                             PeerAddr  => $DEVICE_POOL_ADDR,
+                                             PeerPort  => $DEVICE_POOL_PORT,
                                             );
-            unless ($remote) { die "Cannot connect to http daemon on qt-ci-dev.ci.local:7399. Can't request for device." }
+            unless ($remote) { die "Cannot connect to http daemon on $DEVICE_POOL_ADDR:$DEVICE_POOL_PORT. Releasing of device not done." }
             $remote->autoflush(1);
             print $remote "$string";
             while ( <$remote> ) { $resp .= $_; }
