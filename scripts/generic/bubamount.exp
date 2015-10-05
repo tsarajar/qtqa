@@ -12,6 +12,8 @@ expect "\\->"
 send "hostAdd \"CI\",\"$myip\"\n"
 expect "\\->"
 sleep 2
+send "nfsAuthUnixSet \"CI\", 501, 501, 0\n"
+expect "\\->"
 send "nfsMount \"CI\",\"/work\",\"/work\"\n"
 expect "\\->"
 send "nfsMount \"CI\",\"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common\",\"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common\"\n"
