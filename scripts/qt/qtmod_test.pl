@@ -64,8 +64,8 @@ Readonly my $TESTCOCOON  => 'testcocoon';
 Readonly my $BUBAMOUNT => catfile( "$FindBin::Bin/../generic", 'bubamount.exp' );
 Readonly my $BUBACOPY => catfile( "$FindBin::Bin/../generic", 'bubacopy.exp' );
 Readonly my $POWERCYCLE => catfile( "$FindBin::Bin/../generic", 'power_cycle.pl' );
-Readonly my $DEVICE_POOL_PORT = 7398;
-Readonly my $DEVICE_POOL_ADDR = "qt-ci-dev.ci.local";
+Readonly my $DEVICE_POOL_PORT => 7398;
+Readonly my $DEVICE_POOL_ADDR => "qt-ci-dev.ci.local";
 
 Readonly my %COVERAGE_TOOLS => (
     $TESTCOCOON  =>  1,
