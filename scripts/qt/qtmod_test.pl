@@ -1692,8 +1692,8 @@ sub release_device
             while ( <$remote> ) { $resp .= $_; }
             close $remote;
 
-        chomp($resp);
-        print "qt-ci-dev.ci.local returned $resp\n";
+        (!defined $resp) ? $resp="" : chomp($resp);
+        print "qt-ci-dev.ci.local returned '$resp'\n";
     }
 
     if (defined $ENV{SSH_DEVICE_IP}) {
@@ -1712,8 +1712,8 @@ sub release_device
             while ( <$remote> ) { $resp .= $_; }
             close $remote;
 
-        chomp($resp);
-        print "qt-ci-dev.ci.local returned $resp\n";
+        (!defined $resp) ? $resp="" : chomp($resp);
+        print "qt-ci-dev.ci.local returned '$resp'\n";
     }
 }
 
