@@ -338,7 +338,7 @@ sub patch_my_src
     }
     if ($qt_patch_second ne "") {
       #diff
-      $self->exe( 'git', 'apply', "$qt_patch_second" );
+      $self->exe( $qt_patch_second );
     }
 
 }
