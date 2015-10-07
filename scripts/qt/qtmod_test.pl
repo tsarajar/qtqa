@@ -451,7 +451,8 @@ sub default_qt_tests_args
 {
     my ($self) = @_;
 
-    my @out = ('-silent');
+#    my @out = ('-silent');
+    my @out = ();
 
     # If we're capturing logs, arrange to capture native XML by default
     # for maximum fidelity, and also print to stdout for live feedback.
