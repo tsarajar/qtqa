@@ -52,7 +52,7 @@ expect "\\->"
 send_user "Timeout set to $timeout\n->"
 send "rtpSp( \"$command $arg1 $arg2 $arg3 $arg4 $arg5\", 200, 0x50000, 0, 0x01000000)\r"
 expect {
-    -re "Totals: (.*) passed" { send_user "\nAutotest Finished.\n"; exit 0; }
+    -re "Totals: .* blacklisted" { send_user "\nAutotest Finished.\n"; exit 0; }
     -re "(.*) Finished testing of (.*)\n" { send_user "\nAutotest Finished.\n"; exit 0; }
     "</TestCase>" { send_user "\nAutotest Finished.\n"; exit 0; }
     -re "C interp: unable to open '(.*)'." { send_user "\nMissing autotest executable. Autotest failed.\n"; exit 1; }
