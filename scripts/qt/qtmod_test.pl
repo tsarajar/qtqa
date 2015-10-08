@@ -1695,6 +1695,7 @@ sub release_device
 
         (!defined $resp) ? $resp="" : chomp($resp);
         print "qt-ci-dev.ci.local returned '$resp'\n";
+        delete $ENV{ADB_DEVICE_IP};
     }
 
     if (defined $ENV{SSH_DEVICE_IP}) {
@@ -1715,6 +1716,7 @@ sub release_device
 
         (!defined $resp) ? $resp="" : chomp($resp);
         print "qt-ci-dev.ci.local returned '$resp'\n";
+        delete $ENV{SSH_DEVICE_IP};
     }
 }
 
