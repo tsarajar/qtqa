@@ -1669,9 +1669,9 @@ sub prepare_device
     # There was a problem
     if ($?) {
         release_device();
-        return;
+        return 0;
     }
-
+    return 1;
 }
 
 sub release_device
@@ -1783,7 +1783,7 @@ sub _run_autotests_impl
 
     request_device();
     if ($replace_vxworks_sources) {
-       prepare_device();
+       prepare_device() or die ("Error preparing device");;
     }
 
     my $run = sub {
