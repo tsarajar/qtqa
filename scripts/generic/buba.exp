@@ -12,7 +12,49 @@ set arg3  [lindex $argv 7]
 set arg4  [lindex $argv 8]
 set arg5  [lindex $argv 9]
 
-if {$command == "/work/build/qt/qtdeclarative/tests/auto/qml/parserstress/tst_parserstress"} {
+if {$command == "/work/build/qt/qtbase/tests/auto/corelib/io/qdatastream/tst_qdatastream"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/corelib/io/qdiriterator/tst_qdiriterator"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/widgets/dialogs/qfiledialog/tst_qfiledialog"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/widgets/graphicsview/qgraphicslinearlayout/tst_qgraphicslinearlayout"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/gui/image/qimagereader/tst_qimagereader"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/widgets/itemviews/qitemview/tst_qitemview"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/corelib/plugin/qlibrary/tst_qlibrary"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/other/qnetworkaccessmanager_and_qprogressdialog/tst_qnetworkaccessmanager_and_qprogressdialog"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/widgets/widgets/qspinbox/tst_qspinbox"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/widgets/itemviews/qtableview/tst_qtableview"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/corelib/io/qtemporarydir/tst_qtemporarydir"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/widgets/itemviews/qtreeview/tst_qtreeview"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/xml/sax/qxmlsimplereader/tst_qxmlsimplereader"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtbase/tests/auto/corelib/xml/qxmlstream/tst_qxmlstream"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/qml/parserstress/tst_parserstress"} {
 send_user "Setting timeout to 3600\n";
 set timeout 3600
 } elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/qmltest/tst_qmltest"} {
