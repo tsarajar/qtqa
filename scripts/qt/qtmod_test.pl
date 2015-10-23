@@ -1204,7 +1204,12 @@ sub run_compile
             .qq{Compiling tests failed! This only a warning, because qt_ignore_tst_compile is set.};
         }
         else {
-            exit ($EVAL_ERROR);
+            if ($EVAL_ERROR =~ m/\d+/) {
+                exit ($EVAL_ERROR);
+            } else {
+                print "EVAL_ERROR has value '$EVAL_ERROR' and will cause 'exit 1'\n";
+                exit 1;
+            }
         }
     }
     else {
