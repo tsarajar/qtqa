@@ -55,8 +55,26 @@ set timeout 1800
 send_user "Setting timeout to 1800\n";
 set timeout 1800
 } elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/qml/parserstress/tst_parserstress"} {
-send_user "Setting timeout to 3600\n";
-set timeout 3600
+send_user "Setting timeout to 5600\n";
+set timeout 5600
+} elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/qml/qqmllistmodelworkerscript/tst_qqmllistmodelworkerscript"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/qml/qquickfolderlistmodel/tst_qquickfolderlistmodel"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/quick/qquickpathview/tst_qquickpathview"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/quick/qquickshortcut/tst_qquickshortcut"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/quick/qquicktextedit/tst_qquicktextedit"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
+} elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/quick/qquicktextinput/tst_qquicktextinput"} {
+send_user "Setting timeout to 1800\n";
+set timeout 1800
 } elseif {$command == "/work/build/qt/qtdeclarative/tests/auto/qmltest/tst_qmltest"} {
 send_user "Setting timeout to 3600\n"
 set timeout 3600
