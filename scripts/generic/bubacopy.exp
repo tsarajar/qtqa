@@ -70,15 +70,15 @@ send "xcopy \"/work/install/lib/libQt5*so.5\", \"/sd0:1/qt55rtp/lib\"\n"
 handle_copy_output
 send "xcopy \"/work/install/lib/fonts\", \"/sd0:1/qt55rtp/lib/fonts\"\n"
 handle_copy_output
-send "copy \"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common/libgfxFslVivEGL.so\", \"/sd0:1/lib/libgfxFslVivEGL.so.1\"\n"
+send "copy \"/opt/fsl_imx6_1_1_5_2_VSB/usr/lib/common/libgfxFslVivEGL.so\", \"/sd0:1/lib/libgfxFslVivEGL.so.1\"\n"
 handle_copy_output
-send "copy \"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common/libgfxFslVivGAL.so\", \"/sd0:1/lib/libgfxFslVivGAL.so.1\"\n"
+send "copy \"/opt/fsl_imx6_1_1_5_2_VSB/usr/lib/common/libgfxFslVivGAL.so\", \"/sd0:1/lib/libgfxFslVivGAL.so.1\"\n"
 handle_copy_output
-send "copy \"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common/libgfxFslVivGLESv2.so\", \"/sd0:1/lib/libgfxFslVivGLESv2.so.1\"\n"
+send "copy \"/opt/fsl_imx6_1_1_5_2_VSB/usr/lib/common/libgfxFslVivGLESv2.so\", \"/sd0:1/lib/libgfxFslVivGLESv2.so.1\"\n"
 handle_copy_output
-send "copy \"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common/libgfxFslVivGLSLC.so\", \"/sd0:1/lib/libgfxFslVivGLSLC.so.1\"\n"
+send "copy \"/opt/fsl_imx6_1_1_5_2_VSB/usr/lib/common/libgfxFslVivGLSLC.so\", \"/sd0:1/lib/libgfxFslVivGLSLC.so.1\"\n"
 handle_copy_output
-send "copy \"/opt/fsl_imx6_1_1_4_3_VSB/usr/lib/common/libc.so\", \"/sd0:1/lib/libc.so.1\"\n"
+send "copy \"/opt/fsl_imx6_1_1_5_2_VSB/usr/lib/common/libc.so\", \"/sd0:1/lib/libc.so.1\"\n"
 handle_copy_output
 send_user "\nCopying done.\n"
 exit 0
