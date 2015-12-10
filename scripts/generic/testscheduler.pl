@@ -212,7 +212,7 @@ sub run
 
       # get own ip address
 #      my ($addr) = inet_ntoa((gethostbyname(hostname))[4]); #didn't work when dns wasn't updated
-      my $sock = IO::Socket::INET->new(PeerAddr => 'www.perl.org',
+      my $sock = IO::Socket::INET->new(PeerAddr => 'www.qt.io',
                                         PeerPort => 'http(80)',
                                         Proto    => 'tcp');
 
