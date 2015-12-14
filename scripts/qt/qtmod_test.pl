@@ -1222,6 +1222,7 @@ sub run_compile
 sub run_install
 {
     my ($self) = @_;
+    print "Installing\n";
 
     my $doing = $self->doing( 'installing Qt' );
 
@@ -1259,13 +1260,14 @@ sub run_install
 
     # Note that we are installed, since this changes some behavior elsewhere
     $self->{ installed } = 1;
-
+    print "Install complete.\n";
     return;
 }
 
 sub run_install_check
 {
     my ($self) = @_;
+    print "Checking installation\n";
 
     my $doing = $self->doing( 'checking the installation' );
 
@@ -1283,7 +1285,7 @@ sub run_install_check
            .'are missing from the install tree:'.join("\n ", q{}, @missing_files)."\n"
         );
     }
-
+    print "Checking of installation done\n";
     return;
 }
 
