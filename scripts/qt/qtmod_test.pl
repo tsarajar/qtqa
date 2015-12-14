@@ -228,6 +228,7 @@ my @PROPERTIES = (
 
     q{qt.patch.first}          => q{patch 1},
     q{qt.patch.second}         => q{patch 2},
+    q{qt.patch.third}          => q{patch 3},
     q{qt.patch.module}         => q{mdule to be patched},
 
     q{replace.vxworks.sources} => q{replace vxworks sources},
@@ -319,6 +320,7 @@ sub patch_my_src
     my ($self) = @_;
     my $qt_patch_first         = $self->{ 'qt.patch.first' };
     my $qt_patch_second        = $self->{ 'qt.patch.second' };
+    my $qt_patch_third         = $self->{ 'qt.patch.third' };
     my $qt_patch_module        = $self->{ 'qt.patch.module' };
     my $qt_build_dir           = $self->{ 'qt.build.dir' };
     my $qt_gitmodule           = $self->{ 'qt.gitmodule' };
@@ -326,7 +328,7 @@ sub patch_my_src
     print "Patching....\n";
     #chdir( $qt_build_dir );
     #chdir( $qt_patch_module );
-    if ( $qt_patch_first ne '' || $qt_patch_second ne '' ){
+    if ( $qt_patch_first ne '' || $qt_patch_second ne '' || $qt_patch_third ne '' ){
       chdir( $qt_build_dir );
       chdir( $qt_patch_module );
     }
@@ -339,6 +341,10 @@ sub patch_my_src
     if ($qt_patch_second ne "") {
       #diff
       $self->exe( $qt_patch_second );
+    }
+    if ($qt_patch_third ne "") {
+      #diff
+      $self->exe( $qt_patch_third );
     }
 
 }
@@ -579,6 +585,7 @@ sub read_and_store_configuration
 
         'qt.patch.first'          => q{}                                         ,
         'qt.patch.second'         => q{}                                         ,
+        'qt.patch.third'          => q{}                                         ,
         'qt.patch.module'         => q{}                                         ,
 
         'replace.vxworks.sources' => 0                                           ,
