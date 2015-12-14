@@ -77,7 +77,7 @@ sub new
 
     my %self = (
         resolved_property =>  {},  # resolved property cache starts empty
-        verbose           =>   0,
+        verbose           =>   1,
     );
 
     bless \%self, $class;
