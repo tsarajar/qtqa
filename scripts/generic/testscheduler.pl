@@ -711,7 +711,7 @@ sub execute_serial_tests
             $self->wait_for_test_to_complete( );
         }
         if ($ENV{SSH_DEVICE_USER} && $ENV{SSH_DEVICE_PASSWD} && $ENV{SSH_DEVICE_IP}) {
-            my $sock = IO::Socket::INET->new(PeerAddr => 'www.perl.org',
+            my $sock = IO::Socket::INET->new(PeerAddr => 'www.qt.io',
                                     PeerPort => 'http(80)',
                                     Proto    => 'tcp');
             my $addr = $sock->sockhost;
