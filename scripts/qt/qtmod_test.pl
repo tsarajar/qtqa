@@ -880,12 +880,12 @@ sub maybe_skip_revdep_test
     return;
 }
 
-sub switch_to_550_branch
+sub switch_to_551_branch
 {
-    print "Switching to 5.5.0 branch.\n";
+    print "Switching to 5.5.1 branch.\n";
     my ($self) = @_;
     my $basedir = getcwd;
-    $self->exe( 'git', 'checkout', 'remotes/mirror/5.5.0' );
+    $self->exe( 'git', 'checkout', 'remotes/mirror/5.5.1' );
     print "Switch done.\n";
 }
 
@@ -1060,7 +1060,7 @@ sub run_git_checkout
     $self->set_module_refs( %module_to_ref );
 
     if ($replace_vxworks_sources) {
-#        $self->switch_to_550_branch();
+        $self->switch_to_551_branch();
 #        $self->do_init_repository( @needed_modules );
         $self->replace_submodules_with_custom( $qt_gitmodule );
     }
