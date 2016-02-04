@@ -886,6 +886,7 @@ sub switch_to_551_branch
     my ($self) = @_;
     my $basedir = getcwd;
     $self->exe( 'git', 'checkout', 'remotes/origin/5.5.1' );
+    $self->exe( 'perl' 'init-repository', '-f' );
     print "Switch done.\n";
 }
 
