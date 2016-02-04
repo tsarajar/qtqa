@@ -886,21 +886,21 @@ sub switch_to_551_branch
     my ($self) = @_;
     my $basedir = getcwd;
     $self->exe( 'git', 'checkout', 'remotes/origin/5.5.1' );
-    $self->exe( 'cd', 'qtxmlpatterns');
+    chdir ('qtxmlpatterns');
     $self->exe( 'git', 'checkout', 'v5.5.1');
-    $self->exe( 'cd', '..');
-    $self->exe( 'cd', 'qtquickcontrols');
+    chdir ('..');
+    chdir ('qtquickcontrols');
     $self->exe( 'git', 'checkout', 'v5.5.1');
-    $self->exe( 'cd', '..');
-    $self->exe( 'cd', 'qtsvg');
+    chdir ('..');
+    chdir ('qtsvg');
     $self->exe( 'git', 'checkout', 'v5.5.1');
-    $self->exe( 'cd', '..');
-    $self->exe( 'cd', 'qtimageformats');
+    chdir ('..');
+    chdir ('qtimageformats');
     $self->exe( 'git', 'checkout', 'v5.5.1');
-    $self->exe( 'cd', '..');
-    $self->exe( 'cd', 'qtgraphicaleffects');
+    chdir ('..');
+    chdir ('qtgraphicaleffects');
     $self->exe( 'git', 'checkout', 'v5.5.1');
-    $self->exe( 'cd', '..');
+    chdir ('..');
 
     print "Switch done.\n";
 }
