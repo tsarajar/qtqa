@@ -885,7 +885,7 @@ sub switch_to_551_branch
     print "Switching to 5.5.1 branch.\n";
     my ($self) = @_;
     my $basedir = getcwd;
-    $self->exe( 'git', 'checkout', 'remotes/mirror/5.5.1' );
+    $self->exe( 'git', 'checkout', 'remotes/origin/5.5.1' );
     print "Switch done.\n";
 }
 
