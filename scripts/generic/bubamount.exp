@@ -4,6 +4,7 @@ set user [lindex $argv 0]
 set pass [lindex $argv 1]
 set host [lindex $argv 2]
 set myip [lindex $argv 3]
+set sysroot [lindex $argv 4]
 
 spawn ssh -F . -oStrictHostKeyChecking=no $host -l $user
 expect -re ".*assword:.*"
@@ -16,7 +17,7 @@ send "nfsAuthUnixSet \"CI\", 501, 501, 0\n"
 expect "\\->"
 send "nfsMount \"CI\",\"/work\",\"/work\"\n"
 expect "\\->"
-send "nfsMount \"CI\",\"/opt/fsl_imx6_1_1_6_0_VSB/usr/lib/common\",\"/opt/fsl_imx6_1_1_6_0_VSB/usr/lib/common\"\n"
+send "nfsMount \"CI\",\"$sysroot\",\"$sysroot\"\n"
 expect "\\->"
 send_user "\n"
 send "exit\n"

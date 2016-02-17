@@ -1679,7 +1679,7 @@ sub prepare_device
     }
 
     print "Mounting host to device\n";
-    system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
+    system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr $ENV{MOUNTED_SYSROOT}");
     print "Copying binaries\n";
     system ("$BUBACOPY $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP}");
     if ($? == -1) {
