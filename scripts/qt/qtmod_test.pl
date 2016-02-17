@@ -62,6 +62,7 @@ use Sys::Hostname;
 #Code coverage tools
 Readonly my $TESTCOCOON  => 'testcocoon';
 Readonly my $BUBAMOUNT => catfile( "$FindBin::Bin/../generic", 'bubamount.exp' );
+Readonly my $BUBAMOUNT_UBUNTUPHONE => catfile( "$FindBin::Bin/../generic", 'bubamount_ubuntuphone.exp' );
 Readonly my $BUBACOPY => catfile( "$FindBin::Bin/../generic", 'bubacopy.exp' );
 Readonly my $POWERCYCLE => catfile( "$FindBin::Bin/../generic", 'power_cycle.pl' );
 Readonly my $DEVICE_POOL_PORT => 7398;
@@ -1665,6 +1666,7 @@ return;
 
 sub prepare_device
 {
+    my $device = shift;
     print "Preparing device.\n";
     # get own ip address
     my $sock = IO::Socket::INET->new(PeerAddr => 'www.perl.org',
@@ -1677,11 +1679,16 @@ sub prepare_device
         print "+ $POWERCYCLE --rebootandwait\n";
         system ("$POWERCYCLE --rebootandwait");
     }
-
-    print "Mounting host to device\n";
-    system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr $ENV{MOUNTED_SYSROOT}");
-    print "Copying binaries\n";
-    system ("$BUBACOPY $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP}");
+    if ($device eq "vxworks") {
+      print "Mounting host to device\n";
+      system ("$BUBAMOUNT $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr $ENV{MOUNTED_SYSROOT}");
+      print "Copying binaries\n";
+      system ("$BUBACOPY $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP}");
+    }
+    if ($device eq "ubuntuphone") {
+      print "Mounting host to device\n";
+      system ("$BUBAMOUNT_UBUNTUPHONE $ENV{SSH_DEVICE_USER} $ENV{SSH_DEVICE_PASSWD} $ENV{SSH_DEVICE_IP} $addr");
+    }
     if ($? == -1) {
         print "failed to execute: $!\n";
         release_device();
@@ -1779,6 +1786,9 @@ sub _run_autotests_impl
     my $insignificant        = $self->{ $insignificant_option };
 
     my $replace_vxworks_sources = $self->{ 'replace.vxworks.sources' };
+    my $qt_configure_args       = $self->{ 'qt.configure.args'       };
+    my $qt_configure_extra_args = $self->{ 'qt.configure.extra_args' };
+
 
     # mobile targets
     if ($mobile_test_enabled) {
@@ -1813,8 +1823,12 @@ sub _run_autotests_impl
 
     request_device();
     if ($replace_vxworks_sources) {
-       prepare_device() or die ("Error preparing device");;
+       prepare_device("vxworks") or die ("Error preparing device");
     }
+    if ($qt_configure_args =~ m/mirclient/ or $qt_configure_extra_args =~ m/mirclient/) { #temporary solution
+       prepare_device("ubuntuphone") or die ("Error preparing device");
+    }
+    
 
     my $run = sub {
         chdir( $tests_dir );
