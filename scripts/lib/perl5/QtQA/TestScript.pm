@@ -282,7 +282,7 @@ sub _simple_exe
 {
     my ($self, @command) = @_;
 
-    my $status = system( @command );
+    my $status = system( "@command" );
     $self->_handle_exe_status( $status, @command );
 
     return;
